@@ -1,0 +1,1548 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LORA FITNESS | Colombo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Oswald (Tough headings) & Inter (Minimalist body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&amp;family=Oswald:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+    <!-- Custom Config & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        'lora-black': '#050505',
+                        'lora-dark': '#0f0f0f',
+                        'lora-gray': '#1a1a1a',
+                        'lora-accent': '#ccff00', // Cyber Lime
+                        'lora-accent-dim': '#aacc00',
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "linear-gradient(to bottom, rgba(5,5,5,0.2), rgba(5,5,5,1)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop')",
+                        'texture': "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')",
+                    },
+                    keyframes: {
+                        scroll: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scroll': 'scroll 25s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #050505;
+            color: #e5e5e5;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ccff00;
+        }
+
+        /* --- ADVANCED LOADING SCREEN --- */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: all; /* Blocks clicks initially */
+        }
+
+        /* The Shutter Panels */
+        .loader-shutter-top, .loader-shutter-bottom {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: #000;
+            z-index: 10;
+            transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+        .loader-shutter-top { top: 0; transform-origin: top; }
+        .loader-shutter-bottom { bottom: 0; transform-origin: bottom; }
+
+        /* Content inside loader (centered) */
+        .loader-content {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Reveal State */
+        .loader-open .loader-shutter-top { transform: translateY(-100%); }
+        .loader-open .loader-shutter-bottom { transform: translateY(100%); }
+        .loader-open .loader-content { opacity: 0; }
+        #loader.loader-done { display: none !important; pointer-events: none; }
+
+        /* Counter Text */
+        #loader-counter {
+            font-family: 'Oswald', sans-serif;
+            font-size: 8rem;
+            font-weight: bold;
+            color: #ccff00;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .dumbbell-anim {
+            animation: pump 1.5s infinite ease-in-out;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes pump {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 20px #ccff00; }
+        }
+
+        /* --- NAVIGATION --- */
+        .nav-scrolled {
+            background-color: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        
+        .nav-transparent {
+            background-color: transparent;
+            border-bottom: 1px solid transparent;
+            padding-top: 25px;
+            padding-bottom: 25px;
+        }
+
+        /* Underline animation for links */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ccff00;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* --- GLASSMORPHISM & CARDS --- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px; /* Tougher, sharper corners */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: #ccff00;
+            box-shadow: 0 10px 40px -10px rgba(204, 255, 0, 0.15);
+        }
+
+        /* --- UTILITY --- */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            color: transparent;
+        }
+        
+        .angle-divider-bottom {
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.-inset-0\.5{inset:-0.125rem}.-inset-1{inset:-0.25rem}.inset-0{inset:0px}.inset-y-0{top:0px;bottom:0px}.-bottom-1{bottom:-0.25rem}.-bottom-2{bottom:-0.5rem}.-bottom-6{bottom:-1.5rem}.-left-10{left:-2.5rem}.-left-3{left:-0.75rem}.-left-6{left:-1.5rem}.-right-10{right:-2.5rem}.-right-6{right:-1.5rem}.-top-3{top:-0.75rem}.-top-4{top:-1rem}.-top-6{top:-1.5rem}.bottom-0{bottom:0px}.bottom-10{bottom:2.5rem}.bottom-4{bottom:1rem}.bottom-6{bottom:1.5rem}.bottom-8{bottom:2rem}.left-0{left:0px}.left-1\/2{left:50%}.left-1\/4{left:25%}.left-4{left:1rem}.left-6{left:1.5rem}.left-8{left:2rem}.right-0{right:0px}.top-0{top:0px}.top-1\/2{top:50%}.top-1\/4{top:25%}.top-32{top:8rem}.top-6{top:1.5rem}.top-full{top:100%}.z-0{z-index:0}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-50{z-index:50}.order-1{order:1}.order-2{order:2}.col-span-2{grid-column:span 2 / span 2}.mx-6{margin-left:1.5rem;margin-right:1.5rem}.mx-auto{margin-left:auto;margin-right:auto}.-ml-40{margin-left:-10rem}.-mr-2{margin-right:-0.5rem}.-mr-40{margin-right:-10rem}.-mt-40{margin-top:-10rem}.mb-1{margin-bottom:0.25rem}.mb-10{margin-bottom:2.5rem}.mb-12{margin-bottom:3rem}.mb-14{margin-bottom:3.5rem}.mb-16{margin-bottom:4rem}.mb-2{margin-bottom:0.5rem}.mb-20{margin-bottom:5rem}.mb-24{margin-bottom:6rem}.mb-3{margin-bottom:0.75rem}.mb-32{margin-bottom:8rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.ml-10{margin-left:2.5rem}.ml-2{margin-left:0.5rem}.mr-3{margin-right:0.75rem}.mr-4{margin-right:1rem}.mr-5{margin-right:1.25rem}.mt-0{margin-top:0px}.mt-1{margin-top:0.25rem}.mt-10{margin-top:2.5rem}.mt-16{margin-top:4rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-32{margin-top:8rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-0{height:0px}.h-1{height:0.25rem}.h-10{height:2.5rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-24{height:6rem}.h-40{height:10rem}.h-48{height:12rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-64{height:16rem}.h-8{height:2rem}.h-80{height:20rem}.h-\[105\%\]{height:105%}.h-\[1px\]{height:1px}.h-\[2px\]{height:2px}.h-\[300px\]{height:300px}.h-\[420px\]{height:420px}.h-\[450px\]{height:450px}.h-\[500px\]{height:500px}.h-\[520px\]{height:520px}.h-\[550px\]{height:550px}.h-\[55vh\]{height:55vh}.h-\[560px\]{height:560px}.h-\[600px\]{height:600px}.h-\[800px\]{height:800px}.h-full{height:100%}.h-screen{height:100vh}.max-h-\[100px\]{max-height:100px}.min-h-screen{min-height:100vh}.w-0{width:0px}.w-1{width:0.25rem}.w-10{width:2.5rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-2{width:0.5rem}.w-24{width:6rem}.w-40{width:10rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-\[300px\]{width:300px}.w-\[500px\]{width:500px}.w-\[600px\]{width:600px}.w-\[800px\]{width:800px}.w-full{width:100%}.min-w-\[800px\]{min-width:800px}.max-w-2xl{max-width:42rem}.max-w-5xl{max-width:64rem}.max-w-6xl{max-width:72rem}.max-w-7xl{max-width:80rem}.max-w-md{max-width:28rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.border-collapse{border-collapse:collapse}.-translate-x-1{--tw-translate-x:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-full{--tw-translate-x:-100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-1\/2{--tw-translate-x:50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-1\/3{--tw-translate-x:33.333333%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-\[-100\%\]{--tw-translate-x:-100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-1\/2{--tw-translate-y:50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-1\/3{--tw-translate-y:33.333333%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-4{--tw-translate-y:1rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-8{--tw-translate-y:2rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-full{--tw-translate-y:100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-rotate-45{--tw-rotate:-45deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.skew-x-12{--tw-skew-x:12deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.skew-x-\[-10deg\]{--tw-skew-x:-10deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.skew-x-\[10deg\]{--tw-skew-x:10deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.scale-105{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-\[pulse_20s_ease-in-out_infinite\]{animation:pulse 20s ease-in-out infinite}.animate-\[scan_2s_ease-in-out_infinite\]{animation:scan 2s ease-in-out infinite}@keyframes bounce{0%, 100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:none;animation-timing-function:cubic-bezier(0,0,0.2,1)}}.animate-bounce{animation:bounce 1s infinite}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse-slow{animation:pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite}@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}.animate-scroll{animation:scroll 25s linear infinite}.cursor-crosshair{cursor:crosshair}.cursor-default{cursor:default}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.list-none{list-style-type:none}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-6{grid-template-columns:repeat(6, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-16{gap:4rem}.gap-2{gap:0.5rem}.gap-20{gap:5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-x-10 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(2.5rem * var(--tw-space-x-reverse));margin-left:calc(2.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.rounded-r-lg{border-top-right-radius:0.5rem;border-bottom-right-radius:0.5rem}.rounded-t-2xl{border-top-left-radius:1rem;border-top-right-radius:1rem}.rounded-bl-xl{border-bottom-left-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-y-2{border-top-width:2px;border-bottom-width:2px}.border-b{border-bottom-width:1px}.border-l-2{border-left-width:2px}.border-l-4{border-left-width:4px}.border-t{border-top-width:1px}.border-t-2{border-top-width:2px}.border-blue-500\/20{border-color:rgb(59 130 246 / 0.2)}.border-blue-500\/30{border-color:rgb(59 130 246 / 0.3)}.border-gray-500\/20{border-color:rgb(107 114 128 / 0.2)}.border-gray-800{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-green-500\/20{border-color:rgb(34 197 94 / 0.2)}.border-green-500\/30{border-color:rgb(34 197 94 / 0.3)}.border-lora-accent{--tw-border-opacity:1;border-color:rgb(204 255 0 / var(--tw-border-opacity, 1))}.border-lora-accent\/0{border-color:rgb(204 255 0 / 0)}.border-lora-accent\/10{border-color:rgb(204 255 0 / 0.1)}.border-lora-accent\/20{border-color:rgb(204 255 0 / 0.2)}.border-lora-accent\/30{border-color:rgb(204 255 0 / 0.3)}.border-lora-accent\/40{border-color:rgb(204 255 0 / 0.4)}.border-lora-accent\/50{border-color:rgb(204 255 0 / 0.5)}.border-lora-accent\/80{border-color:rgb(204 255 0 / 0.8)}.border-purple-500\/20{border-color:rgb(168 85 247 / 0.2)}.border-purple-500\/30{border-color:rgb(168 85 247 / 0.3)}.border-red-500\/20{border-color:rgb(239 68 68 / 0.2)}.border-red-500\/30{border-color:rgb(239 68 68 / 0.3)}.border-transparent{border-color:transparent}.border-white\/10{border-color:rgb(255 255 255 / 0.1)}.border-white\/15{border-color:rgb(255 255 255 / 0.15)}.border-white\/20{border-color:rgb(255 255 255 / 0.2)}.border-white\/30{border-color:rgb(255 255 255 / 0.3)}.border-white\/5{border-color:rgb(255 255 255 / 0.05)}.border-yellow-500\/20{border-color:rgb(234 179 8 / 0.2)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-black\/20{background-color:rgb(0 0 0 / 0.2)}.bg-black\/40{background-color:rgb(0 0 0 / 0.4)}.bg-black\/50{background-color:rgb(0 0 0 / 0.5)}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-500\/10{background-color:rgb(59 130 246 / 0.1)}.bg-gray-500{--tw-bg-opacity:1;background-color:rgb(107 114 128 / var(--tw-bg-opacity, 1))}.bg-gray-500\/10{background-color:rgb(107 114 128 / 0.1)}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-green-500\/10{background-color:rgb(34 197 94 / 0.1)}.bg-lora-accent{--tw-bg-opacity:1;background-color:rgb(204 255 0 / var(--tw-bg-opacity, 1))}.bg-lora-accent\/10{background-color:rgb(204 255 0 / 0.1)}.bg-lora-accent\/20{background-color:rgb(204 255 0 / 0.2)}.bg-lora-accent\/30{background-color:rgb(204 255 0 / 0.3)}.bg-lora-accent\/5{background-color:rgb(204 255 0 / 0.05)}.bg-lora-black{--tw-bg-opacity:1;background-color:rgb(5 5 5 / var(--tw-bg-opacity, 1))}.bg-lora-black\/80{background-color:rgb(5 5 5 / 0.8)}.bg-lora-black\/90{background-color:rgb(5 5 5 / 0.9)}.bg-lora-dark{--tw-bg-opacity:1;background-color:rgb(15 15 15 / var(--tw-bg-opacity, 1))}.bg-lora-dark\/50{background-color:rgb(15 15 15 / 0.5)}.bg-lora-dark\/80{background-color:rgb(15 15 15 / 0.8)}.bg-lora-dark\/90{background-color:rgb(15 15 15 / 0.9)}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-purple-500\/10{background-color:rgb(168 85 247 / 0.1)}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-red-500\/10{background-color:rgb(239 68 68 / 0.1)}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/5{background-color:rgb(255 255 255 / 0.05)}.bg-yellow-500{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.bg-yellow-500\/10{background-color:rgb(234 179 8 / 0.1)}.bg-zinc-900{--tw-bg-opacity:1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.bg-gradient-to-b{background-image:linear-gradient(to bottom, var(--tw-gradient-stops))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-l{background-image:linear-gradient(to left, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.bg-gradient-to-t{background-image:linear-gradient(to top, var(--tw-gradient-stops))}.bg-gradient-to-tr{background-image:linear-gradient(to top right, var(--tw-gradient-stops))}.from-black{--tw-gradient-from:#000 var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-black\/80{--tw-gradient-from:rgb(0 0 0 / 0.8) var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gray-500{--tw-gradient-from:#6b7280 var(--tw-gradient-from-position);--tw-gradient-to:rgb(107 114 128 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-gray-600{--tw-gradient-from:#4b5563 var(--tw-gradient-from-position);--tw-gradient-to:rgb(75 85 99 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-lora-accent{--tw-gradient-from:#ccff00 var(--tw-gradient-from-position);--tw-gradient-to:rgb(204 255 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-lora-accent\/10{--tw-gradient-from:rgb(204 255 0 / 0.1) var(--tw-gradient-from-position);--tw-gradient-to:rgb(204 255 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-lora-accent\/20{--tw-gradient-from:rgb(204 255 0 / 0.2) var(--tw-gradient-from-position);--tw-gradient-to:rgb(204 255 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-lora-accent\/5{--tw-gradient-from:rgb(204 255 0 / 0.05) var(--tw-gradient-from-position);--tw-gradient-to:rgb(204 255 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-lora-accent\/50{--tw-gradient-from:rgb(204 255 0 / 0.5) var(--tw-gradient-from-position);--tw-gradient-to:rgb(204 255 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-lora-black{--tw-gradient-from:#050505 var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 5 5 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-lora-black\/70{--tw-gradient-from:rgb(5 5 5 / 0.7) var(--tw-gradient-from-position);--tw-gradient-to:rgb(5 5 5 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-transparent{--tw-gradient-from:transparent var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-white\/5{--tw-gradient-from:rgb(255 255 255 / 0.05) var(--tw-gradient-from-position);--tw-gradient-to:rgb(255 255 255 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-yellow-600{--tw-gradient-from:#ca8a04 var(--tw-gradient-from-position);--tw-gradient-to:rgb(202 138 4 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-black\/40{--tw-gradient-to:rgb(0 0 0 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(0 0 0 / 0.4) var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-black\/60{--tw-gradient-to:rgb(0 0 0 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(0 0 0 / 0.6) var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-black\/70{--tw-gradient-to:rgb(0 0 0 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(0 0 0 / 0.7) var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-black\/80{--tw-gradient-to:rgb(0 0 0 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(0 0 0 / 0.8) var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-lora-black\/60{--tw-gradient-to:rgb(5 5 5 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(5 5 5 / 0.6) var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-lora-black\/80{--tw-gradient-to:rgb(5 5 5 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(5 5 5 / 0.8) var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-transparent{--tw-gradient-to:rgb(0 0 0 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), transparent var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-white{--tw-gradient-to:rgb(255 255 255 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #fff var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-white\/5{--tw-gradient-to:rgb(255 255 255 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(255 255 255 / 0.05) var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-\[rgba\(204\2c 255\2c 0\2c 0\.8\)\]{--tw-gradient-to:rgba(204,255,0,0.8) var(--tw-gradient-to-position)}.to-blue-900\/40{--tw-gradient-to:rgb(30 58 138 / 0.4) var(--tw-gradient-to-position)}.to-gray-300{--tw-gradient-to:#d1d5db var(--tw-gradient-to-position)}.to-gray-400{--tw-gradient-to:#9ca3af var(--tw-gradient-to-position)}.to-gray-500{--tw-gradient-to:#6b7280 var(--tw-gradient-to-position)}.to-green-900\/40{--tw-gradient-to:rgb(20 83 45 / 0.4) var(--tw-gradient-to-position)}.to-lora-accent\/20{--tw-gradient-to:rgb(204 255 0 / 0.2) var(--tw-gradient-to-position)}.to-purple-900\/40{--tw-gradient-to:rgb(88 28 135 / 0.4) var(--tw-gradient-to-position)}.to-red-900\/40{--tw-gradient-to:rgb(127 29 29 / 0.4) var(--tw-gradient-to-position)}.to-transparent{--tw-gradient-to:transparent var(--tw-gradient-to-position)}.to-white\/10{--tw-gradient-to:rgb(255 255 255 / 0.1) var(--tw-gradient-to-position)}.to-yellow-200{--tw-gradient-to:#fef08a var(--tw-gradient-to-position)}.to-yellow-400{--tw-gradient-to:#facc15 var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.object-cover{object-fit:cover}.p-1\.5{padding:0.375rem}.p-10{padding:2.5rem}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0{padding-top:0px;padding-bottom:0px}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-20{padding-top:5rem;padding-bottom:5rem}.py-24{padding-top:6rem;padding-bottom:6rem}.py-28{padding-top:7rem;padding-bottom:7rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-32{padding-top:8rem;padding-bottom:8rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.pb-12{padding-bottom:3rem}.pb-16{padding-bottom:4rem}.pb-24{padding-bottom:6rem}.pb-4{padding-bottom:1rem}.pb-6{padding-bottom:1.5rem}.pb-8{padding-bottom:2rem}.pl-4{padding-left:1rem}.pl-6{padding-left:1.5rem}.pl-8{padding-left:2rem}.pr-2{padding-right:0.5rem}.pr-4{padding-right:1rem}.pt-2{padding-top:0.5rem}.pt-20{padding-top:5rem}.pt-24{padding-top:6rem}.pt-32{padding-top:8rem}.pt-4{padding-top:1rem}.pt-8{padding-top:2rem}.text-left{text-align:left}.text-center{text-align:center}.align-top{vertical-align:top}.font-sans{font-family:Inter, sans-serif}.font-display{font-family:Oswald, sans-serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.text-6xl{font-size:3.75rem;line-height:1}.text-\[0\.65rem\]{font-size:0.65rem}.text-\[0\.95rem\]{font-size:0.95rem}.text-\[10px\]{font-size:10px}.text-\[8rem\]{font-size:8rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-light{font-weight:300}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.normal-case{text-transform:none}.italic{font-style:italic}.leading-\[0\.85\]{line-height:0.85}.leading-\[0\.9\]{line-height:0.9}.leading-\[1\.1\]{line-height:1.1}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-\[0\.25em\]{letter-spacing:0.25em}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-\[0\.3em\]{letter-spacing:0.3em}.tracking-\[0\.5em\]{letter-spacing:0.5em}.tracking-tight{letter-spacing:-0.025em}.tracking-tighter{letter-spacing:-0.05em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.text-black\/70{color:rgb(0 0 0 / 0.7)}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-lora-accent{--tw-text-opacity:1;color:rgb(204 255 0 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-white\/\[0\.03\]{color:rgb(255 255 255 / 0.03)}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.line-through{-webkit-text-decoration-line:line-through;text-decoration-line:line-through}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.placeholder-gray-600::placeholder{--tw-placeholder-opacity:1;color:rgb(75 85 99 / var(--tw-placeholder-opacity, 1))}.opacity-0{opacity:0}.opacity-30{opacity:0.3}.opacity-40{opacity:0.4}.opacity-60{opacity:0.6}.opacity-80{opacity:0.8}.opacity-\[0\.03\]{opacity:0.03}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(168\2c 85\2c 247\2c 0\.8\)\]{--tw-shadow:0 0 10px rgba(168,85,247,0.8);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(204\2c 255\2c 0\2c 0\.5\)\]{--tw-shadow:0 0 10px rgba(204,255,0,0.5);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(204\2c 255\2c 0\2c 0\.6\)\]{--tw-shadow:0 0 10px rgba(204,255,0,0.6);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(204\2c 255\2c 0\2c 0\.8\)\]{--tw-shadow:0 0 10px rgba(204,255,0,0.8);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(239\2c 68\2c 68\2c 0\.8\)\]{--tw-shadow:0 0 10px rgba(239,68,68,0.8);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(34\2c 197\2c 94\2c 0\.8\)\]{--tw-shadow:0 0 10px rgba(34,197,94,0.8);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_10px_rgba\(59\2c 130\2c 246\2c 0\.8\)\]{--tw-shadow:0 0 10px rgba(59,130,246,0.8);--tw-shadow-colored:0 0 10px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(168\2c 85\2c 247\2c 0\.2\)\]{--tw-shadow:0 0 15px rgba(168,85,247,0.2);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(204\2c 255\2c 0\2c 0\.1\)\]{--tw-shadow:0 0 15px rgba(204,255,0,0.1);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]{--tw-shadow:0 0 15px rgba(204,255,0,0.3);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(239\2c 68\2c 68\2c 0\.2\)\]{--tw-shadow:0 0 15px rgba(239,68,68,0.2);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(255\2c 255\2c 255\2c 0\.1\)\]{--tw-shadow:0 0 15px rgba(255,255,255,0.1);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(34\2c 197\2c 94\2c 0\.2\)\]{--tw-shadow:0 0 15px rgba(34,197,94,0.2);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(59\2c 130\2c 246\2c 0\.2\)\]{--tw-shadow:0 0 15px rgba(59,130,246,0.2);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(204\2c 255\2c 0\2c 0\.1\)\]{--tw-shadow:0 0 20px rgba(204,255,0,0.1);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]{--tw-shadow:0 0 20px rgba(204,255,0,0.3);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(204\2c 255\2c 0\2c 0\.4\)\]{--tw-shadow:0 0 20px rgba(204,255,0,0.4);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_30px_rgba\(204\2c 255\2c 0\2c 0\.1\)\]{--tw-shadow:0 0 30px rgba(204,255,0,0.1);--tw-shadow-colored:0 0 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_30px_rgba\(204\2c 255\2c 0\2c 0\.2\)\]{--tw-shadow:0 0 30px rgba(204,255,0,0.2);--tw-shadow-colored:0 0 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_30px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]{--tw-shadow:0 0 30px rgba(204,255,0,0.3);--tw-shadow-colored:0 0 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_40px_rgba\(204\2c 255\2c 0\2c 0\.15\)\]{--tw-shadow:0 0 40px rgba(204,255,0,0.15);--tw-shadow-colored:0 0 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_40px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]{--tw-shadow:0 0 40px rgba(204,255,0,0.3);--tw-shadow-colored:0 0 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_50px_rgba\(204\2c 255\2c 0\2c 0\.15\)\]{--tw-shadow:0 0 50px rgba(204,255,0,0.15);--tw-shadow-colored:0 0 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_20px_50px_rgba\(0\2c 0\2c 0\2c 0\.5\)\]{--tw-shadow:0 20px 50px rgba(0,0,0,0.5);--tw-shadow-colored:0 20px 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_25px_60px_rgba\(0\2c 0\2c 0\2c 0\.6\)\]{--tw-shadow:0 25px 60px rgba(0,0,0,0.6);--tw-shadow-colored:0 25px 60px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-\[100px\]{--tw-blur:blur(100px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-\[120px\]{--tw-blur:blur(120px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-\[150px\]{--tw-blur:blur(150px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-\[80px\]{--tw-blur:blur(80px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-md{--tw-blur:blur(12px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.blur-sm{--tw-blur:blur(4px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.brightness-50{--tw-brightness:brightness(.5);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.brightness-75{--tw-brightness:brightness(.75);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.contrast-125{--tw-contrast:contrast(1.25);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-2xl{--tw-drop-shadow:drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_15px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]{--tw-drop-shadow:drop-shadow(0 0 15px rgba(204,255,0,0.3));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_8px_rgba\(204\2c 255\2c 0\2c 0\.5\)\]{--tw-drop-shadow:drop-shadow(0 0 8px rgba(204,255,0,0.5));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-lg{--tw-drop-shadow:drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-2xl{--tw-backdrop-blur:blur(40px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-\[2px\]{--tw-backdrop-blur:blur(2px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.delay-100{transition-delay:100ms}.delay-200{transition-delay:200ms}.duration-1000{transition-duration:1000ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.duration-700{transition-duration:700ms}.ease-in-out{transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1)}.selection\:bg-lora-accent *::selection{--tw-bg-opacity:1;background-color:rgb(204 255 0 / var(--tw-bg-opacity, 1))}.selection\:text-black *::selection{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.selection\:bg-lora-accent::selection{--tw-bg-opacity:1;background-color:rgb(204 255 0 / var(--tw-bg-opacity, 1))}.selection\:text-black::selection{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.open\:border-lora-accent\/30[open]{border-color:rgb(204 255 0 / 0.3)}.open\:bg-lora-black[open]{--tw-bg-opacity:1;background-color:rgb(5 5 5 / var(--tw-bg-opacity, 1))}.open\:shadow-\[0_0_30px_rgba\(204\2c 255\2c 0\2c 0\.05\)\][open]{--tw-shadow:0 0 30px rgba(204,255,0,0.05);--tw-shadow-colored:0 0 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:-translate-y-1:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:-translate-y-2:hover{--tw-translate-y:-0.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:-translate-y-6:hover{--tw-translate-y:-1.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:border-lora-accent:hover{--tw-border-opacity:1;border-color:rgb(204 255 0 / var(--tw-border-opacity, 1))}.hover\:border-lora-accent\/30:hover{border-color:rgb(204 255 0 / 0.3)}.hover\:border-lora-accent\/40:hover{border-color:rgb(204 255 0 / 0.4)}.hover\:border-lora-accent\/50:hover{border-color:rgb(204 255 0 / 0.5)}.hover\:border-white:hover{--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.hover\:border-white\/20:hover{border-color:rgb(255 255 255 / 0.2)}.hover\:bg-lora-accent:hover{--tw-bg-opacity:1;background-color:rgb(204 255 0 / var(--tw-bg-opacity, 1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.hover\:bg-white\/5:hover{background-color:rgb(255 255 255 / 0.05)}.hover\:text-black:hover{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.hover\:text-lora-accent:hover{--tw-text-opacity:1;color:rgb(204 255 0 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:shadow-\[0_0_20px_rgba\(204\2c 255\2c 0\2c 0\.1\)\]:hover{--tw-shadow:0 0 20px rgba(204,255,0,0.1);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_0_20px_rgba\(204\2c 255\2c 0\2c 0\.4\)\]:hover{--tw-shadow:0 0 20px rgba(204,255,0,0.4);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_0_40px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]:hover{--tw-shadow:0 0 40px rgba(204,255,0,0.3);--tw-shadow-colored:0 0 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_0_40px_rgba\(204\2c 255\2c 0\2c 0\.4\)\]:hover{--tw-shadow:0 0 40px rgba(204,255,0,0.4);--tw-shadow-colored:0 0 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_0_40px_rgba\(204\2c 255\2c 0\2c 0\.5\)\]:hover{--tw-shadow:0 0 40px rgba(204,255,0,0.5);--tw-shadow-colored:0 0 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_0_50px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]:hover{--tw-shadow:0 0 50px rgba(204,255,0,0.3);--tw-shadow-colored:0 0 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_0_60px_rgba\(204\2c 255\2c 0\2c 0\.25\)\]:hover{--tw-shadow:0 0 60px rgba(204,255,0,0.25);--tw-shadow-colored:0 0 60px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_10px_20px_rgba\(204\2c 255\2c 0\2c 0\.2\)\]:hover{--tw-shadow:0 10px 20px rgba(204,255,0,0.2);--tw-shadow-colored:0 10px 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_20px_40px_rgba\(0\2c 0\2c 0\2c 0\.4\)\]:hover{--tw-shadow:0 20px 40px rgba(0,0,0,0.4);--tw-shadow-colored:0 20px 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_20px_40px_rgba\(0\2c 0\2c 0\2c 0\.5\)\]:hover{--tw-shadow:0 20px 40px rgba(0,0,0,0.5);--tw-shadow-colored:0 20px 40px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-\[0_20px_50px_rgba\(0\2c 0\2c 0\2c 0\.5\)\]:hover{--tw-shadow:0 20px 50px rgba(0,0,0,0.5);--tw-shadow-colored:0 20px 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.group[open] .group-open\:rotate-180{--tw-rotate:180deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group[open] .group-open\:text-lora-accent{--tw-text-opacity:1;color:rgb(204 255 0 / var(--tw-text-opacity, 1))}.group:focus-within .group-focus-within\:opacity-100{opacity:1}.group:hover .group-hover\:h-full{height:100%}.group:hover .group-hover\:w-4{width:1rem}.group:hover .group-hover\:w-full{width:100%}.group\/btn:hover .group-hover\/btn\:translate-x-0{--tw-translate-x:0px;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group\/link:hover .group-hover\/link\:translate-x-1{--tw-translate-x:0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:-translate-y-2{--tw-translate-y:-0.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:translate-x-0{--tw-translate-x:0px;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:translate-x-1{--tw-translate-x:0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:translate-y-0{--tw-translate-y:0px;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:rotate-0{--tw-rotate:0deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group\/btn:hover .group-hover\/btn\:skew-x-0{--tw-skew-x:0deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:skew-x-0{--tw-skew-x:0deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:scale-105{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:scale-110{--tw-scale-x:1.1;--tw-scale-y:1.1;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group:hover .group-hover\:scale-\[1\.05\]{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.group:hover .group-hover\:animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.group\/row:hover .group-hover\/row\:border-lora-accent{--tw-border-opacity:1;border-color:rgb(204 255 0 / var(--tw-border-opacity, 1))}.group:hover .group-hover\:border-lora-accent{--tw-border-opacity:1;border-color:rgb(204 255 0 / var(--tw-border-opacity, 1))}.group:hover .group-hover\:border-lora-accent\/50{border-color:rgb(204 255 0 / 0.5)}.group:hover .group-hover\:border-white\/20{border-color:rgb(255 255 255 / 0.2)}.group\/link:hover .group-hover\/link\:bg-lora-accent{--tw-bg-opacity:1;background-color:rgb(204 255 0 / var(--tw-bg-opacity, 1))}.group\/row:hover .group-hover\/row\:bg-white\/5{background-color:rgb(255 255 255 / 0.05)}.group:hover .group-hover\:bg-lora-accent{--tw-bg-opacity:1;background-color:rgb(204 255 0 / var(--tw-bg-opacity, 1))}.group:hover .group-hover\:bg-lora-accent\/10{background-color:rgb(204 255 0 / 0.1)}.group:hover .group-hover\:bg-lora-accent\/20{background-color:rgb(204 255 0 / 0.2)}.group:hover .group-hover\:bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.group:hover .group-hover\:via-black\/50{--tw-gradient-to:rgb(0 0 0 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(0 0 0 / 0.5) var(--tw-gradient-via-position), var(--tw-gradient-to)}.group\/btn:hover .group-hover\/btn\:text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.group\/link:hover .group-hover\/link\:text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-blue-50{--tw-text-opacity:1;color:rgb(239 246 255 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-green-50{--tw-text-opacity:1;color:rgb(240 253 244 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-lora-accent{--tw-text-opacity:1;color:rgb(204 255 0 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-purple-50{--tw-text-opacity:1;color:rgb(250 245 255 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-red-50{--tw-text-opacity:1;color:rgb(254 242 242 / var(--tw-text-opacity, 1))}.group:hover .group-hover\:text-white\/\[0\.06\]{color:rgb(255 255 255 / 0.06)}.group\/row:hover .group-hover\/row\:opacity-100{opacity:1}.group:hover .group-hover\:opacity-100{opacity:1}.group:hover .group-hover\:opacity-70{opacity:0.7}.group:hover .group-hover\:shadow-\[0_0_20px_rgba\(204\2c 255\2c 0\2c 0\.3\)\]{--tw-shadow:0 0 20px rgba(204,255,0,0.3);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.group:hover .group-hover\:shadow-\[0_0_50px_rgba\(204\2c 255\2c 0\2c 0\.6\)\]{--tw-shadow:0 0 50px rgba(204,255,0,0.6);--tw-shadow-colored:0 0 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.group:hover .group-hover\:grayscale-0{--tw-grayscale:grayscale(0);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}@media (min-width: 640px){.sm\:flex-row{flex-direction:row}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}@media (min-width: 768px){.md\:order-1{order:1}.md\:order-2{order:2}.md\:col-span-1{grid-column:span 1 / span 1}.md\:col-span-3{grid-column:span 3 / span 3}.md\:col-span-4{grid-column:span 4 / span 4}.md\:col-span-5{grid-column:span 5 / span 5}.md\:row-span-2{grid-row:span 2 / span 2}.md\:mx-0{margin-left:0px;margin-right:0px}.md\:mt-0{margin-top:0px}.md\:mt-8{margin-top:2rem}.md\:block{display:block}.md\:flex{display:flex}.md\:hidden{display:none}.md\:h-auto{height:auto}.md\:h-full{height:100%}.md\:w-2\/3{width:66.666667%}.md\:w-32{width:8rem}.md\:-translate-y-4{--tw-translate-y:-1rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.md\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:p-8{padding:2rem}.md\:px-8{padding-left:2rem;padding-right:2rem}.md\:text-left{text-align:left}.md\:text-5xl{font-size:3rem;line-height:1}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-7xl{font-size:4.5rem;line-height:1}.md\:text-8xl{font-size:6rem;line-height:1}.md\:text-\[7rem\]{font-size:7rem}.md\:text-\[8\.5rem\]{font-size:8.5rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 1024px){.lg\:col-span-3{grid-column:span 3 / span 3}.lg\:col-span-4{grid-column:span 4 / span 4}.lg\:w-1\/3{width:33.333333%}.lg\:w-2\/3{width:66.666667%}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.lg\:flex-row{flex-direction:row}.lg\:gap-24{gap:6rem}.lg\:gap-8{gap:2rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:pl-10{padding-left:2.5rem}.lg\:pr-12{padding-right:3rem}.lg\:text-3xl{font-size:1.875rem;line-height:2.25rem}}</style></head>
+<body class="font-sans antialiased selection:bg-lora-accent selection:text-black" style="overflow-y: auto;">
+
+    <!-- ADVANCED LOADING SCREEN -->
+    <div id="loader" class="loader-open loader-done">
+        <div class="loader-shutter-top"></div>
+        <div class="loader-shutter-bottom"></div>
+        <div class="loader-content">
+            <i class="fas fa-dumbbell dumbbell-anim"></i>
+            <div id="loader-counter">100%</div>
+            <p class="text-white font-display tracking-[0.5em] uppercase text-sm mt-2">Forging Elite Fitness</p>
+        </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="fixed w-full z-50 transition-all duration-300 nav-transparent" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex-shrink-0 cursor-pointer group" onclick="router('home')">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-bolt text-lora-accent text-2xl group-hover:animate-pulse"></i>
+                        <span class="font-display text-3xl font-bold text-white tracking-tighter italic">LORA<span class="text-lora-accent">.</span></span>
+                    </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-10">
+                        <button onclick="router('home')" class="nav-link text-white hover:text-lora-accent px-1 py-2 text-sm font-bold tracking-widest uppercase transition-colors">Home</button>
+                        <button onclick="router('about')" class="nav-link text-gray-300 hover:text-lora-accent px-1 py-2 text-sm font-bold tracking-widest uppercase transition-colors">About</button>
+                        <button onclick="router('classes')" class="nav-link text-gray-300 hover:text-lora-accent px-1 py-2 text-sm font-bold tracking-widest uppercase transition-colors">Classes</button>
+                        <button onclick="router('membership')" class="nav-link text-gray-300 hover:text-lora-accent px-1 py-2 text-sm font-bold tracking-widest uppercase transition-colors">Membership</button>
+                        <button onclick="router('faq')" class="nav-link text-gray-300 hover:text-lora-accent px-1 py-2 text-sm font-bold tracking-widest uppercase transition-colors">FAQ</button>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <div class="hidden md:block">
+                    <button onclick="router('membership')" class="relative overflow-hidden bg-transparent border border-lora-accent text-lora-accent font-display font-bold px-6 py-2 uppercase hover:text-black transition-colors duration-300 group">
+                        <span class="absolute inset-0 w-full h-full bg-lora-accent transform -translate-x-full skew-x-12 transition-transform duration-300 group-hover:translate-x-0 group-hover:skew-x-0"></span>
+                        <span class="relative group-hover:text-black">Join Now</span>
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-lora-accent focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-black border-t border-gray-800 absolute w-full left-0 top-full" id="mobile-menu">
+            <div class="px-4 pt-4 pb-6 space-y-2">
+                <button onclick="router('home')" class="text-white block px-3 py-3 rounded-md text-lg font-display font-bold uppercase w-full text-left hover:bg-white/5 hover:text-lora-accent border-l-2 border-transparent hover:border-lora-accent transition-all">Home</button>
+                <button onclick="router('about')" class="text-gray-300 block px-3 py-3 rounded-md text-lg font-display font-bold uppercase w-full text-left hover:bg-white/5 hover:text-lora-accent border-l-2 border-transparent hover:border-lora-accent transition-all">About</button>
+                <button onclick="router('classes')" class="text-gray-300 block px-3 py-3 rounded-md text-lg font-display font-bold uppercase w-full text-left hover:bg-white/5 hover:text-lora-accent border-l-2 border-transparent hover:border-lora-accent transition-all">Classes</button>
+                <button onclick="router('membership')" class="text-gray-300 block px-3 py-3 rounded-md text-lg font-display font-bold uppercase w-full text-left hover:bg-white/5 hover:text-lora-accent border-l-2 border-transparent hover:border-lora-accent transition-all">Membership</button>
+                <button onclick="router('faq')" class="text-gray-300 block px-3 py-3 rounded-md text-lg font-display font-bold uppercase w-full text-left hover:bg-white/5 hover:text-lora-accent border-l-2 border-transparent hover:border-lora-accent transition-all">FAQ</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main>
+        
+        <!-- PAGE 1: HOME -->
+        <div id="home-page" class="page-content block">
+            
+            <!-- Section 1: Hero -->
+            <section class="relative h-screen flex items-center bg-black overflow-hidden angle-divider-bottom">
+                <!-- Background Image & Overlay -->
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-60 filter grayscale brightness-75 scale-105 animate-[pulse_20s_ease-in-out_infinite] animate-pulse-slow">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                </div>
+
+                <!-- Decorative elements -->
+                <div class="absolute top-0 right-0 p-8 z-10 hidden md:block opacity-30">
+                    <div class="grid grid-cols-6 gap-2">
+                        <div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-lora-accent rounded-full animate-pulse"></div><div class="w-1 h-1 bg-white rounded-full"></div>
+                        <div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-lora-accent rounded-full animate-pulse" style="animation-delay: 200ms"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div>
+                        <div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10 pt-20">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="h-[2px] w-12 bg-lora-accent relative overflow-hidden group">
+                           <span class="absolute inset-0 bg-white translate-x-[-100%] animate-[scan_2s_ease-in-out_infinite]"></span>
+                        </span>
+                        <p class="text-lora-accent font-display tracking-[0.3em] uppercase text-sm font-bold">Colombo 03, Sri Lanka</p>
+                    </div>
+                    
+                    <div class="relative">
+                        <!-- Blur glow behind text -->
+                        <div class="absolute -left-10 top-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-lora-accent/20 blur-[80px] rounded-full pointer-events-none"></div>
+                        
+                        <h1 class="text-6xl md:text-[8.5rem] font-display font-bold text-white leading-[0.85] mb-8 drop-shadow-2xl uppercase tracking-tighter">
+                            DEFY <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-lora-accent via-white to-gray-500">LIMITS</span>
+                        </h1>
+                    </div>
+                    
+                    <p class="max-w-xl text-gray-400 text-lg md:text-xl mb-12 font-light leading-relaxed border-l-4 border-lora-accent/80 pl-6 bg-black/20 backdrop-blur-[2px] py-2 rounded-r-lg">
+                        An elite training facility engineered for those who demand more. No shortcuts. No gimmicks. Just raw iron and <span class="text-white font-semibold">real results.</span>
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        <button onclick="router('membership')" class="relative overflow-hidden bg-lora-accent text-black font-display font-bold text-xl px-10 py-5 uppercase hover:bg-white transition-all duration-300 skew-x-[-10deg] shadow-[0_0_20px_rgba(204,255,0,0.3)] hover:shadow-[0_0_40px_rgba(204,255,0,0.5)] group transform hover:-translate-y-1">
+                            <span class="absolute inset-0 w-full h-full bg-white transform -translate-x-full skew-x-12 transition-transform duration-500 group-hover:translate-x-0 group-hover:skew-x-0"></span>
+                            <span class="relative block skew-x-[10deg] group-hover:text-black flex items-center justify-center gap-3">
+                                Start Free Trial <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                            </span>
+                        </button>
+                        <button onclick="router('classes')" class="relative overflow-hidden bg-transparent border border-white/30 text-white font-display font-bold text-xl px-10 py-5 uppercase hover:border-lora-accent transition-all duration-300 skew-x-[-10deg] backdrop-blur-md group transform hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(204,255,0,0.1)]">
+                            <span class="absolute inset-0 w-full h-full bg-lora-accent/10 transform translate-y-full transition-transform duration-500 group-hover:translate-y-0"></span>
+                            <span class="relative block skew-x-[10deg] group-hover:text-lora-accent transition-colors flex items-center justify-center gap-3">
+                                <i class="far fa-calendar-alt"></i> View Schedule
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scroll Down Indicator -->
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce z-20 cursor-pointer hover:text-lora-accent transition-colors">
+                    <span class="text-[0.65rem] uppercase tracking-[0.3em] text-gray-500 mb-2 font-bold">Scroll</span>
+                    <i class="fas fa-chevron-down text-lora-accent opacity-80"></i>
+                </div>
+            </section>
+
+            <!-- Scrolling Marquee -->
+            <div class="py-5 bg-lora-accent overflow-hidden whitespace-nowrap flex relative z-20 shadow-[0_0_50px_rgba(204,255,0,0.15)] border-y-2 border-lora-accent/40">
+                <div class="animate-scroll inline-block font-display font-bold text-black text-2xl lg:text-3xl uppercase tracking-[0.2em]">
+                    <span class="mx-6">NO EXCUSES</span> • <span class="mx-6">ONLY RESULTS</span> • <span class="mx-6">RAW IRON</span> • <span class="mx-6">DEFINE YOUR LIMITS</span> • <span class="mx-6">TRAIN INSANE</span> • <span class="mx-6 italic px-2 bg-black text-lora-accent">DEFY GRAVITY</span> • 
+                </div>
+                <div class="animate-scroll inline-block font-display font-bold text-black text-2xl lg:text-3xl uppercase tracking-[0.2em]" aria-hidden="true">
+                    <span class="mx-6">NO EXCUSES</span> • <span class="mx-6">ONLY RESULTS</span> • <span class="mx-6">RAW IRON</span> • <span class="mx-6">DEFINE YOUR LIMITS</span> • <span class="mx-6">TRAIN INSANE</span> • <span class="mx-6 italic px-2 bg-black text-lora-accent">DEFY GRAVITY</span> • 
+                </div>
+                <!-- Gradients for smooth edges -->
+                <div class="absolute top-0 left-0 w-16 md:w-32 h-full bg-gradient-to-r from-lora-accent to-transparent z-10 pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-16 md:w-32 h-full bg-gradient-to-l from-lora-accent to-transparent z-10 pointer-events-none"></div>
+            </div>
+
+            <!-- Section 2: The Numbers -->
+            <section class="py-20 bg-lora-black border-b border-white/5">
+                <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 fade-in-section is-visible">
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.8)]"></div>
+                        <h3 class="text-5xl md:text-6xl font-display font-bold text-white">12k<span class="text-lora-accent text-3xl align-top">+</span></h3>
+                        <p class="text-gray-500 uppercase text-xs tracking-[0.2em] mt-3 font-bold">Square Feet</p>
+                    </div>
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.8)]"></div>
+                        <h3 class="text-5xl md:text-6xl font-display font-bold text-white">24<span class="text-lora-accent text-3xl align-top">/7</span></h3>
+                        <p class="text-gray-500 uppercase text-xs tracking-[0.2em] mt-3 font-bold">Member Access</p>
+                    </div>
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.8)]"></div>
+                        <h3 class="text-5xl md:text-6xl font-display font-bold text-white">50<span class="text-lora-accent text-3xl align-top">+</span></h3>
+                        <p class="text-gray-500 uppercase text-xs tracking-[0.2em] mt-3 font-bold">Pro Machines</p>
+                    </div>
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.8)]"></div>
+                        <h3 class="text-5xl md:text-6xl font-display font-bold text-white">15<span class="text-lora-accent text-3xl align-top">+</span></h3>
+                        <p class="text-gray-500 uppercase text-xs tracking-[0.2em] mt-3 font-bold">Elite Coaches</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: About Teaser -->
+            <section class="py-32 bg-lora-dark relative overflow-hidden">
+                <!-- Decorative background elements -->
+                <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-lora-accent/10 rounded-full blur-[150px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+                <!-- Grid pattern -->
+                <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(#ccff00 1px, transparent 1px), linear-gradient(90deg, #ccff00 1px, transparent 1px); background-size: 50px 50px;"></div>
+                
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-20 items-center relative z-10">
+                    <!-- Image Composition -->
+                    <div class="fade-in-section relative is-visible">
+                        <!-- Background offset border -->
+                        <div class="absolute -top-6 -left-6 w-full h-full border-2 border-lora-accent/20 rounded-xl z-0"></div>
+                        
+                        <div class="relative z-10 group overflow-hidden rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60"></div>
+                            <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&amp;w=2069&amp;auto=format&amp;fit=crop" alt="Gym Interior" class="w-full h-[550px] object-cover filter grayscale contrast-125 brightness-75 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700">
+                            
+                            <!-- Floating Badge -->
+                            <div class="absolute bottom-8 left-8 z-20 bg-lora-black/80 backdrop-blur-md border border-white/10 p-5 rounded-lg transform transition-transform group-hover:-translate-y-2 duration-500 shadow-[0_0_20px_rgba(204,255,0,0.1)] group-hover:border-lora-accent/50">
+                                <p class="text-white font-display font-bold text-3xl leading-none">2024</p>
+                                <p class="text-lora-accent tracking-widest uppercase text-[0.65rem] font-bold mt-1">Established</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Play Button (overlapping) -->
+                        <div class="absolute top-1/2 -right-10 -translate-y-1/2 z-30 cursor-pointer group pointer-events-auto">
+                            <div class="relative flex items-center justify-center w-24 h-24 bg-lora-accent rounded-full shadow-[0_0_30px_rgba(204,255,0,0.3)] group-hover:shadow-[0_0_50px_rgba(204,255,0,0.6)] transition-all duration-300 group-hover:scale-110">
+                                <div class="absolute inset-0 bg-lora-accent rounded-full animate-ping opacity-30"></div>
+                                <i class="fas fa-play text-black text-2xl ml-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Content -->
+                    <div class="fade-in-section lg:pl-10 is-visible">
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="w-12 h-[2px] bg-lora-accent"></span>
+                            <span class="text-lora-accent text-xs font-bold tracking-[0.3em] uppercase">Our Philosophy</span>
+                        </div>
+                        
+                        <h2 class="text-4xl md:text-6xl font-display font-bold mb-8 text-white leading-[1.1] uppercase tracking-tight">NOT JUST A GYM.<br>A <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-500 to-gray-300">LIFESTYLE.</span></h2>
+                        
+                        <div class="space-y-6 text-gray-400 text-lg font-light leading-relaxed mb-10">
+                            <p>Located in the heart of Colombo, Lora Fitness redefines the standard. We combine raw industrial aesthetics with state-of-the-art biomechanics.</p>
+                            <p>Whether you are a bodybuilder, a cross-fitter, or just starting out, our zone-based layout ensures you have the dedicated space to perform without compromise.</p>
+                        </div>
+                        
+                        <div class="space-y-6 mb-12 border-l-2 border-white/10 pl-6">
+                            <div class="flex items-start group">
+                                <div class="w-10 h-10 rounded bg-lora-black border border-white/5 flex items-center justify-center text-lora-accent mr-5 group-hover:bg-lora-accent group-hover:text-black transition-colors duration-300 flex-shrink-0 mt-1">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-white font-bold uppercase text-sm tracking-wider">Premium Equipment</h5>
+                                    <p class="text-gray-500 text-sm mt-1">Certified Hammer Strength &amp; Rogue platforms.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start group">
+                                <div class="w-10 h-10 rounded bg-lora-black border border-white/5 flex items-center justify-center text-lora-accent mr-5 group-hover:bg-lora-accent group-hover:text-black transition-colors duration-300 flex-shrink-0 mt-1">
+                                    <i class="fas fa-snowflake"></i>
+                                </div>
+                                <div>
+                                    <h5 class="text-white font-bold uppercase text-sm tracking-wider">Pro Recovery Zone</h5>
+                                    <p class="text-gray-500 text-sm mt-1">Infrared sauna, cryotherapy, and deep tissue.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="router('about')" class="group flex items-center gap-4 text-white hover:text-lora-accent transition-colors">
+                            <span class="font-bold uppercase tracking-widest text-sm relative">
+                                Read Our Story
+                                <span class="absolute -bottom-1 left-0 w-0 h-[2px] bg-lora-accent group-hover:w-full transition-all duration-300"></span>
+                            </span>
+                            <div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center group-hover:border-lora-accent transition-colors">
+                                <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Programs/Classes -->
+            <section class="py-28 bg-black relative overflow-hidden">
+                <div class="absolute top-1/2 right-0 -translate-y-1/2 -mr-40 w-[600px] h-[600px] bg-lora-accent/4 rounded-full blur-[120px] pointer-events-none"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-14 fade-in-section">
+                        <div>
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="w-12 h-[2px] bg-lora-accent"></span>
+                                <span class="text-lora-accent text-xs font-bold tracking-[0.3em] uppercase">Training Programs</span>
+                            </div>
+                            <h2 class="text-4xl md:text-5xl font-display font-bold text-white uppercase tracking-tight">DISCIPLINES</h2>
+                        </div>
+                        <button onclick="router('classes')" class="hidden md:flex items-center gap-3 text-white border border-white/15 px-6 py-3 hover:bg-lora-accent hover:text-black hover:border-lora-accent transition-all duration-300 uppercase font-bold text-sm tracking-widest group mt-6 md:mt-0">
+                            Full Schedule <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 items-start">
+                        <!-- Card 1: HIIT -->
+                        <div class="group relative h-[420px] overflow-hidden cursor-pointer fade-in-section rounded-xl" onclick="router('classes')">
+                            <img src="https://images.unsplash.com/photo-1517963879433-6ad2b056d712?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent group-hover:via-black/50 transition-all duration-500"></div>
+                            <!-- Top badge -->
+                            <div class="absolute top-6 left-6 bg-black/50 backdrop-blur-sm border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-lora-accent">High Intensity</div>
+                            <div class="absolute bottom-0 left-0 right-0 p-8">
+                                <h3 class="text-5xl font-display font-bold text-white mb-2 italic tracking-tight">HIIT</h3>
+                                <p class="text-gray-400 text-sm mb-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 leading-relaxed">Burn fat and build endurance with high-intensity interval training designed to push your limits.</p>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-[2px] w-8 bg-lora-accent group-hover:w-full transition-all duration-700"></div>
+                                    <span class="text-lora-accent text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">Explore →</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2: POWER (taller) -->
+                        <div class="group relative h-[520px] overflow-hidden cursor-pointer fade-in-section rounded-xl" style="transition-delay: 100ms" onclick="router('classes')">
+                            <img src="https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent group-hover:via-black/50 transition-all duration-500"></div>
+                            <div class="absolute top-6 left-6 bg-black/50 backdrop-blur-sm border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-lora-accent">Strength</div>
+                            <div class="absolute bottom-0 left-0 right-0 p-8">
+                                <h3 class="text-5xl font-display font-bold text-white mb-2 italic tracking-tight">POWER</h3>
+                                <p class="text-gray-400 text-sm mb-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 leading-relaxed">Heavy lifting, powerlifting focus, and strength conditioning for maximum muscle and mass.</p>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-[2px] w-8 bg-lora-accent group-hover:w-full transition-all duration-700"></div>
+                                    <span class="text-lora-accent text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">Explore →</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3: FLOW -->
+                        <div class="group relative h-[420px] overflow-hidden cursor-pointer fade-in-section rounded-xl" style="transition-delay: 200ms" onclick="router('classes')">
+                            <img src="https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&amp;w=2069&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent group-hover:via-black/50 transition-all duration-500"></div>
+                            <div class="absolute top-6 left-6 bg-black/50 backdrop-blur-sm border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-lora-accent">Mobility</div>
+                            <div class="absolute bottom-0 left-0 right-0 p-8">
+                                <h3 class="text-5xl font-display font-bold text-white mb-2 italic tracking-tight">FLOW</h3>
+                                <p class="text-gray-400 text-sm mb-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 leading-relaxed">Yoga and dynamic stretching to prevent injury and expand your range of motion.</p>
+                                <div class="flex items-center gap-3">
+                                    <div class="h-[2px] w-8 bg-lora-accent group-hover:w-full transition-all duration-700"></div>
+                                    <span class="text-lora-accent text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">Explore →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+             <!-- Section 5: Real Results -->
+             <section class="py-28 bg-lora-dark border-t border-white/5 relative overflow-hidden">
+                <div class="absolute top-0 left-0 -ml-40 -mt-40 w-[500px] h-[500px] bg-lora-accent/5 rounded-full blur-[100px] pointer-events-none"></div>
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-14 fade-in-section">
+                        <div>
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="w-12 h-[2px] bg-lora-accent"></span>
+                                <span class="text-lora-accent text-xs font-bold tracking-[0.3em] uppercase">Testimonials</span>
+                            </div>
+                            <h2 class="text-4xl md:text-5xl font-display font-bold text-white uppercase tracking-tight">REAL <span class="text-lora-accent">RESULTS</span></h2>
+                        </div>
+                        <p class="text-gray-500 text-sm mt-4 md:mt-0 font-light italic">See what happens when you stop making excuses.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Testimonial 1 -->
+                        <div class="group relative bg-lora-black border border-white/5 hover:border-lora-accent/30 p-8 flex gap-6 items-start fade-in-section transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-1">
+                            <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.6)]"></div>
+                            <div class="flex-shrink-0">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-16 h-16 rounded-full grayscale group-hover:grayscale-0 transition-all duration-500 border-2 border-lora-accent/50 group-hover:border-lora-accent shadow-[0_0_15px_rgba(204,255,0,0.1)] group-hover:shadow-[0_0_20px_rgba(204,255,0,0.3)]">
+                            </div>
+                            <div>
+                                <div class="flex text-lora-accent mb-3 gap-1">
+                                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                                </div>
+                                <p class="text-gray-300 italic mb-5 leading-relaxed">"I've been to every gym in Colombo. Nothing matches the vibe at Lora. The equipment is top tier and the trainers actually care about your form."</p>
+                                <p class="text-white font-bold font-display uppercase text-sm">Kasun P. <span class="text-lora-accent font-normal normal-case ml-2 text-xs">— Lost 15kg in 6 months</span></p>
+                            </div>
+                        </div>
+                        <!-- Testimonial 2 -->
+                        <div class="group relative bg-lora-black border border-white/5 hover:border-lora-accent/30 p-8 flex gap-6 items-start fade-in-section transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-1" style="transition-delay: 100ms">
+                            <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.6)]"></div>
+                            <div class="flex-shrink-0">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-16 h-16 rounded-full grayscale group-hover:grayscale-0 transition-all duration-500 border-2 border-lora-accent/50 group-hover:border-lora-accent shadow-[0_0_15px_rgba(204,255,0,0.1)] group-hover:shadow-[0_0_20px_rgba(204,255,0,0.3)]">
+                            </div>
+                            <div>
+                                <div class="flex text-lora-accent mb-3 gap-1">
+                                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                                </div>
+                                <p class="text-gray-300 italic mb-5 leading-relaxed">"The classes are intense! I love the HIIT sessions. The community is super supportive — no judgement, just hard work and real results."</p>
+                                <p class="text-white font-bold font-display uppercase text-sm">Amaya D. <span class="text-lora-accent font-normal normal-case ml-2 text-xs">— HIIT &amp; CrossFit Regular</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Trainers -->
+            <section class="py-28 bg-black">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-14 fade-in-section">
+                        <div>
+                            <div class="flex items-center gap-4 mb-3">
+                                <span class="w-12 h-[2px] bg-lora-accent"></span>
+                                <span class="text-lora-accent text-xs font-bold tracking-[0.3em] uppercase">Our Coaches</span>
+                            </div>
+                            <h2 class="text-4xl md:text-5xl font-display font-bold text-white uppercase tracking-tight">THE <span class="text-lora-accent">ELITE</span></h2>
+                            <p class="text-gray-500 mt-2 text-sm">Train with the best in Colombo.</p>
+                        </div>
+                        <button onclick="router('about')" class="hidden md:flex items-center gap-3 text-white border border-white/15 px-6 py-3 hover:bg-lora-accent hover:text-black hover:border-lora-accent transition-all duration-300 uppercase font-bold text-sm tracking-widest group">
+                            View All Coaches <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- Coach 1 -->
+                        <div class="group relative overflow-hidden fade-in-section cursor-pointer rounded-xl">
+                            <div class="relative h-80 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?q=80&amp;w=1974&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                                <!-- Social overlay -->
+                                <div class="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                                    <div class="flex gap-4 text-white justify-center">
+                                        <i class="fab fa-instagram hover:text-lora-accent cursor-pointer text-lg transition-colors"></i>
+                                        <i class="fab fa-twitter hover:text-lora-accent cursor-pointer text-lg transition-colors"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-5 bg-lora-dark border-t-2 border-lora-accent/0 group-hover:border-lora-accent transition-colors duration-500">
+                                <h4 class="text-xl font-display font-bold text-white">MARCUS</h4>
+                                <p class="text-lora-accent text-xs font-bold uppercase tracking-widest mt-1">Head Coach</p>
+                            </div>
+                        </div>
+
+                        <!-- Coach 2 -->
+                        <div class="group relative overflow-hidden fade-in-section cursor-pointer rounded-xl" style="transition-delay: 100ms">
+                            <div class="relative h-80 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1611672585731-fa1060a7618c?q=80&amp;w=1974&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                            </div>
+                            <div class="p-5 bg-lora-dark border-t-2 border-lora-accent/0 group-hover:border-lora-accent transition-colors duration-500">
+                                <h4 class="text-xl font-display font-bold text-white">SARAH</h4>
+                                <p class="text-lora-accent text-xs font-bold uppercase tracking-widest mt-1">HIIT Specialist</p>
+                            </div>
+                        </div>
+
+                        <!-- Coach 3 -->
+                        <div class="group relative overflow-hidden fade-in-section cursor-pointer rounded-xl" style="transition-delay: 200ms">
+                            <div class="relative h-80 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                            </div>
+                            <div class="p-5 bg-lora-dark border-t-2 border-lora-accent/0 group-hover:border-lora-accent transition-colors duration-500">
+                                <h4 class="text-xl font-display font-bold text-white">JAY</h4>
+                                <p class="text-lora-accent text-xs font-bold uppercase tracking-widest mt-1">Bodybuilding</p>
+                            </div>
+                        </div>
+
+                        <!-- Coach 4 -->
+                        <div class="group relative overflow-hidden fade-in-section cursor-pointer rounded-xl" style="transition-delay: 300ms">
+                            <div class="relative h-80 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&amp;w=1974&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                            </div>
+                            <div class="p-5 bg-lora-dark border-t-2 border-lora-accent/0 group-hover:border-lora-accent transition-colors duration-500">
+                                <h4 class="text-xl font-display font-bold text-white">ELENA</h4>
+                                <p class="text-lora-accent text-xs font-bold uppercase tracking-widest mt-1">Nutritionist</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Location/Map CTA -->
+            <section class="py-0 relative h-[560px] flex items-center bg-zinc-900 overflow-hidden">
+                <div class="w-full h-full absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&amp;w=2074&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-40 filter grayscale contrast-125 scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
+                </div>
+                <div class="relative z-10 container mx-auto px-4">
+                    <div class="max-w-md">
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="w-12 h-[2px] bg-lora-accent"></span>
+                            <span class="text-lora-accent text-xs font-bold tracking-[0.3em] uppercase">Find Us</span>
+                        </div>
+                        <h3 class="text-4xl md:text-5xl font-display font-bold text-white mb-2 uppercase tracking-tight">VISIT THE <span class="text-lora-accent">HQ</span></h3>
+                        <p class="text-lora-accent text-sm font-bold uppercase tracking-widest mb-6">Colombo 03, Sri Lanka</p>
+                        <p class="text-gray-300 mb-6 leading-relaxed font-light">
+                            157 Galle Rd, Colombo 03, Sri Lanka.<br>
+                            Directly opposite the Sea View Hotel.<br>
+                            Underground parking available.
+                        </p>
+                        <div class="flex items-center text-white mb-8 gap-4 text-lg">
+                            <div class="w-10 h-10 rounded-full bg-lora-accent/10 border border-lora-accent/30 flex items-center justify-center">
+                                <i class="fas fa-phone-alt text-lora-accent text-sm"></i>
+                            </div>
+                            <span class="font-light">+94 11 234 5678</span>
+                        </div>
+                        <button class="relative overflow-hidden bg-lora-accent text-black font-display font-bold px-10 py-4 uppercase tracking-widest text-sm hover:bg-white transition-all duration-300 w-full shadow-[0_0_30px_rgba(204,255,0,0.2)] hover:shadow-[0_0_40px_rgba(204,255,0,0.4)] flex items-center justify-center gap-3">
+                            <i class="fas fa-map-marker-alt"></i> Get Directions
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Home Footer moved to Global Footer -->
+        </div>
+
+        <!-- PAGE 2: ABOUT US -->
+        <div id="about-page" class="page-content hidden min-h-screen bg-lora-black">
+
+            <!-- Hero Banner -->
+            <div class="relative h-[55vh] flex items-end overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="absolute inset-0 w-full h-full object-cover grayscale brightness-50 scale-105" style="object-position: center 30%;">
+                <div class="absolute inset-0 bg-gradient-to-t from-lora-black via-lora-black/60 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-lora-black/70 to-transparent"></div>
+                <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 w-full">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="w-16 h-[2px] bg-lora-accent"></span>
+                        <span class="text-lora-accent text-sm font-bold tracking-[0.3em] uppercase">Est. 2024, Colombo</span>
+                    </div>
+                    <h1 class="text-6xl md:text-[7rem] font-display font-bold text-white uppercase leading-[0.85] tracking-tight">WHO<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-lora-accent via-white to-gray-500">WE ARE</span></h1>
+                </div>
+            </div>
+
+            <!-- Story Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+                <div class="grid md:grid-cols-2 gap-20 items-center mb-32">
+
+                    <!-- Image Block -->
+                    <div class="relative order-2 md:order-1">
+                        <!-- Decorative grid pattern -->
+                        <div class="absolute -top-6 -left-6 w-40 h-40 border border-lora-accent/20 z-0"></div>
+                        <div class="absolute -top-3 -left-3 w-40 h-40 border border-lora-accent/10 z-0"></div>
+
+                        <div class="relative z-10 group">
+                            <div class="absolute inset-0 bg-gradient-to-br from-lora-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 rounded-xl"></div>
+                            <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&amp;w=2069&amp;auto=format&amp;fit=crop" alt="Gym Interior" class="w-full h-[500px] object-cover rounded-xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] filter grayscale group-hover:grayscale-0 transition-all duration-700">
+
+                            <!-- Floating stat badge -->
+                            <div class="absolute -bottom-6 -right-6 bg-lora-accent p-6 rounded-xl z-20 shadow-[0_0_40px_rgba(204,255,0,0.3)]">
+                                <p class="text-black font-display font-bold text-4xl leading-none">12k<span class="text-2xl">+</span></p>
+                                <p class="text-black/70 text-xs font-bold uppercase tracking-widest mt-1">Sq. Feet</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Block -->
+                    <div class="order-1 md:order-2">
+                        <h4 class="text-lora-accent font-bold tracking-[0.25em] uppercase text-sm mb-3">Our Philosophy</h4>
+                        <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-8 leading-tight uppercase">Not just a gym.<br><span class="text-gray-500">A Lifestyle.</span></h2>
+
+                        <div class="space-y-6 text-gray-400 text-lg font-light leading-relaxed">
+                            <p><span class="text-white font-semibold">Lora Fitness</span> was born from a simple truth: gyms shouldn't be soft. They should be sanctuaries of effort — places where the weight of the world disappears under the weight of iron.</p>
+                            <p>Established in 2024 in Colombo, we bridged a gap between luxury gyms that lacked soul and raw dungeons that lacked standards. The result is something entirely our own.</p>
+                        </div>
+
+                        <!-- Pullquote -->
+                        <div class="relative mt-10 pl-8 border-l-4 border-lora-accent py-2">
+                            <div class="absolute top-0 left-0 -translate-x-1 w-2 h-full bg-lora-accent/30 blur-sm"></div>
+                            <p class="text-white text-xl font-light italic leading-relaxed">"We don't sell memberships. We sell the tools to build a better version of yourself."</p>
+                        </div>
+
+                        <button onclick="router('membership')" class="mt-10 relative overflow-hidden bg-black/50 backdrop-blur-sm border border-lora-accent text-lora-accent font-display font-bold px-10 py-4 uppercase tracking-[0.2em] text-sm hover:text-black transition-all duration-500 group shadow-[0_0_20px_rgba(204,255,0,0.1)] hover:shadow-[0_0_40px_rgba(204,255,0,0.3)] hover:-translate-y-1 inline-flex items-center gap-3">
+                            <span class="absolute inset-0 w-full h-full bg-lora-accent transform -translate-x-full skew-x-12 transition-transform duration-500 group-hover:translate-x-0 group-hover:skew-x-0"></span>
+                            <span class="relative group-hover:text-black">Join The Movement</span>
+                            <i class="fas fa-arrow-right relative group-hover:text-black"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-32">
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700"></div>
+                        <p class="text-5xl font-display font-bold text-white mb-1">15<span class="text-lora-accent text-3xl">+</span></p>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Elite Coaches</p>
+                    </div>
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700"></div>
+                        <p class="text-5xl font-display font-bold text-white mb-1">24<span class="text-lora-accent text-3xl">/7</span></p>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Member Access</p>
+                    </div>
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700"></div>
+                        <p class="text-5xl font-display font-bold text-white mb-1">50<span class="text-lora-accent text-3xl">+</span></p>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Pro Machines</p>
+                    </div>
+                    <div class="relative group bg-lora-dark border border-white/5 hover:border-lora-accent/30 p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                        <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700"></div>
+                        <p class="text-5xl font-display font-bold text-white mb-1">1k<span class="text-lora-accent text-3xl">+</span></p>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest font-bold">Active Members</p>
+                    </div>
+                </div>
+
+                <!-- Core Values -->
+                <div class="mb-16">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-display font-bold text-white uppercase tracking-tight">OUR <span class="text-lora-accent">VALUES</span></h2>
+                            <div class="w-16 h-1 bg-lora-accent mt-3"></div>
+                        </div>
+                        <p class="text-gray-600 uppercase tracking-widest text-xs font-bold mt-6 md:mt-0">What drives us</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- GRIT -->
+                        <div class="group relative overflow-hidden bg-lora-dark border border-white/5 hover:border-lora-accent/40 p-10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                            <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.8)]"></div>
+                            <div class="absolute top-0 right-0 text-[8rem] font-display font-bold text-white/[0.03] leading-none select-none pointer-events-none group-hover:text-white/[0.06] transition-colors duration-500">G</div>
+                            <div class="w-14 h-14 rounded-xl bg-lora-accent/10 border border-lora-accent/20 flex items-center justify-center mb-8 group-hover:bg-lora-accent/20 group-hover:scale-110 transition-all duration-300">
+                                <i class="fas fa-fist-raised text-2xl text-lora-accent"></i>
+                            </div>
+                            <h3 class="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tight">GRIT</h3>
+                            <p class="text-gray-400 leading-relaxed">We believe in the power of perseverance. When it hurts, that's when the real work begins. There is no substitute for hard work.</p>
+                        </div>
+
+                        <!-- TRIBE -->
+                        <div class="group relative overflow-hidden bg-lora-dark border border-white/5 hover:border-lora-accent/40 p-10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:mt-8">
+                            <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.8)]"></div>
+                            <div class="absolute top-0 right-0 text-[8rem] font-display font-bold text-white/[0.03] leading-none select-none pointer-events-none group-hover:text-white/[0.06] transition-colors duration-500">T</div>
+                            <div class="w-14 h-14 rounded-xl bg-lora-accent/10 border border-lora-accent/20 flex items-center justify-center mb-8 group-hover:bg-lora-accent/20 group-hover:scale-110 transition-all duration-300">
+                                <i class="fas fa-users text-2xl text-lora-accent"></i>
+                            </div>
+                            <h3 class="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tight">TRIBE</h3>
+                            <p class="text-gray-400 leading-relaxed">Leave your ego at the door. Inside Lora, we are all equal — striving, grinding, and growing toward the same goal together.</p>
+                        </div>
+
+                        <!-- EXCELLENCE -->
+                        <div class="group relative overflow-hidden bg-lora-dark border border-white/5 hover:border-lora-accent/40 p-10 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                            <div class="absolute bottom-0 left-0 h-1 w-0 bg-lora-accent group-hover:w-full transition-all duration-700 shadow-[0_0_10px_rgba(204,255,0,0.8)]"></div>
+                            <div class="absolute top-0 right-0 text-[8rem] font-display font-bold text-white/[0.03] leading-none select-none pointer-events-none group-hover:text-white/[0.06] transition-colors duration-500">E</div>
+                            <div class="w-14 h-14 rounded-xl bg-lora-accent/10 border border-lora-accent/20 flex items-center justify-center mb-8 group-hover:bg-lora-accent/20 group-hover:scale-110 transition-all duration-300">
+                                <i class="fas fa-medal text-2xl text-lora-accent"></i>
+                            </div>
+                            <h3 class="text-3xl font-display font-bold text-white mb-4 uppercase tracking-tight">EXCELLENCE</h3>
+                            <p class="text-gray-400 leading-relaxed">From equipment to cleanliness, we maintain standards that others only aspire to. Nothing at Lora is ever "good enough."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Facility Showcase -->
+                <div class="mt-32">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-display font-bold text-white uppercase tracking-tight">THE <span class="text-lora-accent">FACILITY</span></h2>
+                            <div class="w-16 h-1 bg-lora-accent mt-3"></div>
+                        </div>
+                        <p class="text-gray-600 uppercase tracking-widest text-xs font-bold mt-6 md:mt-0">12,000 sq ft of raw potential</p>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="group relative h-64 overflow-hidden rounded-xl col-span-2 md:col-span-1 md:row-span-2 md:h-auto">
+                            <img src="https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                            <p class="absolute bottom-6 left-6 z-20 text-white font-display font-bold uppercase tracking-widest text-sm">Free Weights Zone</p>
+                        </div>
+                        <div class="group relative h-48 md:h-full overflow-hidden rounded-xl">
+                            <img src="https://images.unsplash.com/photo-1517963879433-6ad2b056d712?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                            <p class="absolute bottom-4 left-4 z-20 text-white font-display font-bold uppercase tracking-widest text-sm">Cardio Deck</p>
+                        </div>
+                        <div class="group relative h-48 md:h-full overflow-hidden rounded-xl">
+                            <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                            <p class="absolute bottom-4 left-4 z-20 text-white font-display font-bold uppercase tracking-widest text-sm">HIIT Studio</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Footer removed in favor of Global Footer -->
+        </div>
+
+
+        <!-- PAGE 3: CLASSES -->
+        <div id="classes-page" class="page-content hidden min-h-screen bg-lora-dark">
+            <div class="pt-32 pb-24">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-16 relative">
+                        <div class="relative z-10 w-full md:w-2/3">
+                            <div class="flex items-center gap-4 mb-4">
+                                <span class="w-16 h-[2px] bg-gradient-to-r from-lora-accent to-transparent"></span>
+                                <span class="text-lora-accent text-sm font-bold tracking-[0.3em] uppercase drop-shadow-[0_0_8px_rgba(204,255,0,0.5)]">Daily Schedule</span>
+                            </div>
+                            <h1 class="text-6xl md:text-8xl font-display font-bold text-white mb-4 uppercase leading-[0.9] tracking-tight">WEEKLY <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-lora-accent via-white to-gray-500 drop-shadow-2xl">GRIND</span></h1>
+                            <p class="text-gray-400 max-w-xl text-lg font-light border-l-2 border-lora-accent/50 pl-6 mt-8 leading-relaxed">Book your spot via our app or walk in. Classes are complimentary for <span class="text-white font-bold">Pro</span> and <span class="text-white font-bold">Elite</span> members.</p>
+                        </div>
+                        <div class="mt-10 md:mt-0 relative z-10">
+                            <button class="relative overflow-hidden bg-black/50 backdrop-blur-sm border border-lora-accent text-lora-accent font-display font-bold px-10 py-5 uppercase tracking-[0.2em] text-sm hover:text-black transition-all duration-500 group shadow-[0_0_30px_rgba(204,255,0,0.1)] hover:shadow-[0_0_50px_rgba(204,255,0,0.3)] hover:-translate-y-1">
+                                <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-lora-accent to-[rgba(204,255,0,0.8)] transform -translate-x-full skew-x-12 transition-transform duration-500 group-hover:translate-x-0 group-hover:skew-x-0"></span>
+                                <span class="relative group-hover:text-black flex items-center gap-3"><i class="fas fa-mobile-alt text-lg"></i> Get The App</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Schedule Table -->
+                    <div class="relative mb-24 group">
+                        <!-- Glowing background border effect -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-lora-accent/20 via-white/5 to-lora-accent/20 rounded-3xl blur opacity-30 group-hover:opacity-70 transition duration-1000"></div>
+                        
+                        <div class="overflow-x-auto bg-lora-dark/90 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10 w-full">
+                            <table class="w-full text-left border-collapse min-w-[800px]">
+                                <thead>
+                                    <tr class="bg-black/40 border-b border-white/10 font-display text-lg tracking-[0.2em] text-gray-400 uppercase">
+                                        <th class="p-8 text-lora-accent">TIME</th>
+                                        <th class="p-8 hover:text-white transition-colors cursor-default">MON</th>
+                                        <th class="p-8 hover:text-white transition-colors cursor-default">TUE</th>
+                                        <th class="p-8 hover:text-white transition-colors cursor-default">WED</th>
+                                        <th class="p-8 hover:text-white transition-colors cursor-default">THU</th>
+                                        <th class="p-8 hover:text-white transition-colors cursor-default">FRI</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-300 font-light text-sm">
+                                    <!-- Row 1 -->
+                                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all duration-300 group/row cursor-crosshair">
+                                        <td class="p-8 font-bold text-white bg-black/20 border-l-4 border-transparent group-hover/row:border-lora-accent transition-colors">06:00<span class="text-xs text-lora-accent ml-1 align-top">AM</span></td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-red-500/10 text-red-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-red-500/20">HIIT</span>HIIT Blast</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-blue-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-blue-500/10 text-blue-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-blue-500/20">STR</span>CrossFit</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-red-500/10 text-red-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-red-500/20">HIIT</span>HIIT Blast</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-blue-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-blue-500/10 text-blue-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-blue-500/20">STR</span>CrossFit</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-green-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-green-500/10 text-green-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-green-500/20">MOB</span>Mobility</td>
+                                    </tr>
+                                    <!-- Row 2 -->
+                                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all duration-300 group/row cursor-crosshair">
+                                        <td class="p-8 font-bold text-white bg-black/20 border-l-4 border-transparent group-hover/row:border-lora-accent transition-colors">08:00<span class="text-xs text-lora-accent ml-1 align-top">AM</span></td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-green-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-green-500/10 text-green-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-green-500/20">MOB</span>Yoga Flow</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-blue-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-blue-500/10 text-blue-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-blue-500/20">STR</span>Power Hour</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-green-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-green-500/10 text-green-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-green-500/20">MOB</span>Yoga Flow</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-blue-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-blue-500/10 text-blue-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-blue-500/20">STR</span>Power Hour</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-yellow-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-yellow-500/10 text-yellow-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-yellow-500/20">CORE</span>Abs &amp; Core</td>
+                                    </tr>
+                                    <!-- Row 3 -->
+                                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all duration-300 group/row cursor-crosshair">
+                                        <td class="p-8 font-bold text-white bg-black/20 border-l-4 border-transparent group-hover/row:border-lora-accent transition-colors">05:30<span class="text-xs text-lora-accent ml-1 align-top">PM</span></td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-purple-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-purple-500/10 text-purple-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-purple-500/20">COND</span>BoxFit</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-blue-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-blue-500/10 text-blue-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-blue-500/20">STR</span>Legs &amp; Glutes</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-purple-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-purple-500/10 text-purple-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-purple-500/20">COND</span>BoxFit</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-blue-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-blue-500/10 text-blue-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-blue-500/20">STR</span>Upper Body</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-red-500/10 text-red-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-red-500/20">HIIT</span>MetCon</td>
+                                    </tr>
+                                    <!-- Row 4 -->
+                                    <tr class="hover:bg-white/5 transition-all duration-300 group/row cursor-crosshair">
+                                        <td class="p-8 font-bold text-white bg-black/20 border-l-4 border-transparent group-hover/row:border-lora-accent transition-colors rounded-bl-xl">07:00<span class="text-xs text-lora-accent ml-1 align-top">PM</span></td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-purple-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-purple-500/10 text-purple-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-purple-500/20">COND</span>Spinning</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-red-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-red-500/10 text-red-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-red-500/20">HIIT</span>Zumba</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-purple-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-purple-500/10 text-purple-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-purple-500/20">COND</span>Spinning</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-yellow-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-yellow-500/10 text-yellow-500 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-yellow-500/20">CORE</span>Functional</td>
+                                        <td class="p-8 group-hover/row:bg-white/5 transition-colors relative"><div class="absolute inset-y-0 left-0 w-1 bg-gray-500 opacity-0 group-hover/row:opacity-100 transition-opacity"></div><span class="bg-gray-500/10 text-gray-400 px-2 py-1 text-[10px] font-bold rounded uppercase tracking-widest mr-3 border border-gray-500/20">OPEN</span>Open Gym</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Class Descriptions -->
+                    <div class="mb-14 text-center md:text-left flex flex-col md:flex-row justify-between items-end">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-3 tracking-tight">THE <span class="text-lora-accent">DISCIPLINES</span></h2>
+                            <div class="w-16 h-1 bg-lora-accent mx-auto md:mx-0"></div>
+                        </div>
+                        <p class="text-gray-500 uppercase tracking-widest text-xs font-bold mt-6 md:mt-0">Select your battlefield</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Class Card 1: HIIT -->
+                        <div class="group relative overflow-hidden rounded-2xl h-[450px] cursor-pointer bg-lora-black">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-red-900/40 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-[1.05]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-20"></div>
+                            
+                            <!-- Content -->
+                            <div class="absolute bottom-0 left-0 p-8 w-full z-30 transform translate-y-8 group-hover:translate-y-0 transition-all duration-500">
+                                <span class="bg-red-500/10 text-red-500 border border-red-500/30 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest mb-4 inline-block backdrop-blur-md shadow-[0_0_15px_rgba(239,68,68,0.2)]">High Intensity</span>
+                                <h3 class="text-3xl font-display font-bold text-white mb-2 group-hover:text-red-50 transition-colors">HIIT Blast</h3>
+                                <p class="text-gray-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 leading-relaxed max-h-[100px] overflow-hidden">45 minutes of pure adrenaline. Alternating periods of short intense anaerobic exercise to torch fat and build endurance.</p>
+                                
+                                <div class="mt-6 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
+                                    <span class="text-red-400 text-xs font-bold uppercase tracking-widest">Explore</span>
+                                    <div class="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white"><i class="fas fa-arrow-right text-xs"></i></div>
+                                </div>
+                                
+                                <!-- Glowing Border Line -->
+                                <div class="absolute bottom-0 left-0 h-1 w-0 bg-red-500 group-hover:w-full transition-all duration-700 ease-in-out shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
+                            </div>
+                        </div>
+
+                        <!-- Class Card 2: STRENGTH -->
+                        <div class="group relative overflow-hidden rounded-2xl h-[450px] cursor-pointer bg-lora-black">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900/40 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-[1.05]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-20"></div>
+                            
+                            <!-- Content -->
+                            <div class="absolute bottom-0 left-0 p-8 w-full z-30 transform translate-y-8 group-hover:translate-y-0 transition-all duration-500">
+                                <span class="bg-blue-500/10 text-blue-500 border border-blue-500/30 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest mb-4 inline-block backdrop-blur-md shadow-[0_0_15px_rgba(59,130,246,0.2)]">Strength Focus</span>
+                                <h3 class="text-3xl font-display font-bold text-white mb-2 group-hover:text-blue-50 transition-colors">Power Hour</h3>
+                                <p class="text-gray-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 leading-relaxed max-h-[100px] overflow-hidden">Focus on the big three: Squat, Bench, Deadlift. Low reps, high weight, long rest periods. Built for absolute raw strength.</p>
+                                
+                                <div class="mt-6 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
+                                    <span class="text-blue-400 text-xs font-bold uppercase tracking-widest">Explore</span>
+                                    <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white"><i class="fas fa-arrow-right text-xs"></i></div>
+                                </div>
+                                
+                                <!-- Glowing Border Line -->
+                                <div class="absolute bottom-0 left-0 h-1 w-0 bg-blue-500 group-hover:w-full transition-all duration-700 ease-in-out shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
+                            </div>
+                        </div>
+
+                        <!-- Class Card 3: CONDITIONING -->
+                        <div class="group relative overflow-hidden rounded-2xl h-[450px] cursor-pointer bg-lora-black">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-purple-900/40 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1549746328-91c6e1aa2cae?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-[1.05]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-20"></div>
+                            
+                            <!-- Content -->
+                            <div class="absolute bottom-0 left-0 p-8 w-full z-30 transform translate-y-8 group-hover:translate-y-0 transition-all duration-500">
+                                <span class="bg-purple-500/10 text-purple-500 border border-purple-500/30 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest mb-4 inline-block backdrop-blur-md shadow-[0_0_15px_rgba(168,85,247,0.2)]">Conditioning</span>
+                                <h3 class="text-3xl font-display font-bold text-white mb-2 group-hover:text-purple-50 transition-colors">BoxFit</h3>
+                                <p class="text-gray-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 leading-relaxed max-h-[100px] overflow-hidden">Technical boxing drills combined with rigorous conditioning. Learn to throw a proper punch while getting shredded.</p>
+                                
+                                <div class="mt-6 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
+                                    <span class="text-purple-400 text-xs font-bold uppercase tracking-widest">Explore</span>
+                                    <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white"><i class="fas fa-arrow-right text-xs"></i></div>
+                                </div>
+                                
+                                <!-- Glowing Border Line -->
+                                <div class="absolute bottom-0 left-0 h-1 w-0 bg-purple-500 group-hover:w-full transition-all duration-700 ease-in-out shadow-[0_0_10px_rgba(168,85,247,0.8)]"></div>
+                            </div>
+                        </div>
+
+                        <!-- Class Card 4: RECOVERY -->
+                        <div class="group relative overflow-hidden rounded-2xl h-[450px] cursor-pointer bg-lora-black">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-green-900/40 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&amp;w=2069&amp;auto=format&amp;fit=crop" class="absolute inset-0 w-full h-full object-cover filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 group-hover:scale-[1.05]">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-20"></div>
+                            
+                            <!-- Content -->
+                            <div class="absolute bottom-0 left-0 p-8 w-full z-30 transform translate-y-8 group-hover:translate-y-0 transition-all duration-500">
+                                <span class="bg-green-500/10 text-green-500 border border-green-500/30 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest mb-4 inline-block backdrop-blur-md shadow-[0_0_15px_rgba(34,197,94,0.2)]">Recovery</span>
+                                <h3 class="text-3xl font-display font-bold text-white mb-2 group-hover:text-green-50 transition-colors">Mobility &amp; Yoga</h3>
+                                <p class="text-gray-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 leading-relaxed max-h-[100px] overflow-hidden">Active recovery. Essential for longevity in lifting. Focus on hip opening, shoulder mobility, and injury prevention.</p>
+                                
+                                <div class="mt-6 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
+                                    <span class="text-green-400 text-xs font-bold uppercase tracking-widest">Explore</span>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white"><i class="fas fa-arrow-right text-xs"></i></div>
+                                </div>
+                                
+                                <!-- Glowing Border Line -->
+                                <div class="absolute bottom-0 left-0 h-1 w-0 bg-green-500 group-hover:w-full transition-all duration-700 ease-in-out shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Basic Footer removed in favor of Global Footer -->
+        </div>
+
+        <!-- PAGE 4: MEMBERSHIP -->
+        <div id="membership-page" class="page-content hidden min-h-screen relative bg-lora-black">
+            <!-- Background Image & Blur Effects -->
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&amp;w=2070&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover opacity-30 filter grayscale brightness-50">
+                <div class="absolute inset-0 bg-gradient-to-t from-lora-black via-lora-black/80 to-transparent"></div>
+            </div>
+            
+            <div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-lora-accent/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+            
+            <div class="relative z-10 pt-32 pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-20 fade-in-section">
+                    <div class="flex items-center justify-center gap-4 mb-4">
+                        <span class="w-12 h-[2px] bg-lora-accent"></span>
+                        <span class="text-lora-accent text-xs font-bold tracking-[0.3em] uppercase drop-shadow-[0_0_8px_rgba(204,255,0,0.5)]">Membership</span>
+                        <span class="w-12 h-[2px] bg-lora-accent"></span>
+                    </div>
+                    <h1 class="text-5xl md:text-8xl font-display font-bold text-white uppercase tracking-tight leading-[0.9]">
+                        Invest In <span class="text-transparent bg-clip-text bg-gradient-to-r from-lora-accent to-gray-500 drop-shadow-lg">Yourself</span>
+                    </h1>
+                    <p class="text-gray-400 mt-6 text-lg font-light max-w-2xl mx-auto">No hidden fees. No complicated contracts. Just pure value for those serious about their results.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 items-center max-w-6xl mx-auto z-20 relative">
+                    
+                    <!-- Basic Plan -->
+                    <div class="group relative bg-lora-dark/80 backdrop-blur-xl border border-white/5 p-8 flex flex-col h-full rounded-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] fade-in-section">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-600 to-gray-400 rounded-t-2xl"></div>
+                        <h3 class="text-3xl font-display font-bold text-white mb-2">BASIC</h3>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest mb-8 font-bold">For the casual lifter</p>
+                        <div class="text-5xl font-display font-bold text-white mb-2">LKR 5k<span class="text-lg text-gray-500 font-sans font-normal">/mo</span></div>
+                        <p class="text-gray-400 text-sm mb-8">Access to standard equipment during staffed hours.</p>
+                        
+                        <ul class="space-y-4 mb-10 flex-1">
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-lora-accent/10 flex items-center justify-center mr-3"><i class="fas fa-check text-lora-accent text-[10px]"></i></div> Access 08:00 - 16:00</li>
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-lora-accent/10 flex items-center justify-center mr-3"><i class="fas fa-check text-lora-accent text-[10px]"></i></div> Cardio &amp; Weights Zone</li>
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-lora-accent/10 flex items-center justify-center mr-3"><i class="fas fa-check text-lora-accent text-[10px]"></i></div> Locker Access</li>
+                            <li class="flex items-center text-gray-600 text-sm"><div class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center mr-3"><i class="fas fa-times text-gray-500 text-[10px]"></i></div> <span class="line-through">Sauna Access</span></li>
+                            <li class="flex items-center text-gray-600 text-sm"><div class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center mr-3"><i class="fas fa-times text-gray-500 text-[10px]"></i></div> <span class="line-through">Classes Included</span></li>
+                        </ul>
+                        <button class="w-full border border-white/20 text-white font-bold py-4 rounded uppercase tracking-widest text-sm hover:bg-white hover:text-black hover:border-white transition-all duration-300">Select Plan</button>
+                    </div>
+
+                    <!-- Pro Plan (Featured) -->
+                    <div class="group relative bg-lora-black/90 backdrop-blur-2xl border border-lora-accent p-10 flex flex-col h-[105%] rounded-2xl md:-translate-y-4 shadow-[0_0_40px_rgba(204,255,0,0.15)] transition-all duration-500 hover:-translate-y-6 hover:shadow-[0_0_60px_rgba(204,255,0,0.25)] fade-in-section z-10" style="transition-delay: 100ms">
+                        <div class="absolute inset-0 bg-gradient-to-b from-lora-accent/5 to-transparent rounded-2xl pointer-events-none"></div>
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-lora-accent text-black text-xs font-bold px-6 py-2 uppercase tracking-widest shadow-[0_0_20px_rgba(204,255,0,0.4)] rounded-full">Most Popular</div>
+                        
+                        <h3 class="text-4xl font-display font-bold text-white mb-2 relative z-10">PRO</h3>
+                        <p class="text-lora-accent text-xs uppercase tracking-widest mb-8 font-bold relative z-10">For the dedicated</p>
+                        <div class="text-6xl font-display font-bold text-lora-accent mb-2 relative z-10 drop-shadow-[0_0_15px_rgba(204,255,0,0.3)]">LKR 8.5k<span class="text-lg text-gray-400 font-sans font-normal text-shadow-none">/mo</span></div>
+                        <p class="text-gray-300 text-sm mb-8 relative z-10">Everything you need to transform your physique and lifestyle.</p>
+                        
+                        <ul class="space-y-5 mb-10 flex-1 relative z-10">
+                            <li class="flex items-center text-white text-sm font-medium"><div class="w-6 h-6 rounded-full bg-lora-accent flex items-center justify-center mr-4 shadow-[0_0_10px_rgba(204,255,0,0.5)]"><i class="fas fa-check text-black text-xs"></i></div> 24/7 Unlimited Access</li>
+                            <li class="flex items-center text-white text-sm font-medium"><div class="w-6 h-6 rounded-full bg-lora-accent flex items-center justify-center mr-4 shadow-[0_0_10px_rgba(204,255,0,0.5)]"><i class="fas fa-check text-black text-xs"></i></div> All Classes Included</li>
+                            <li class="flex items-center text-white text-sm font-medium"><div class="w-6 h-6 rounded-full bg-lora-accent flex items-center justify-center mr-4 shadow-[0_0_10px_rgba(204,255,0,0.5)]"><i class="fas fa-check text-black text-xs"></i></div> Free Guest Pass (1/mo)</li>
+                            <li class="flex items-center text-gray-300 text-sm font-medium"><div class="w-6 h-6 rounded-full bg-lora-accent/20 border border-lora-accent/50 flex items-center justify-center mr-4"><i class="fas fa-check text-lora-accent text-xs"></i></div> Sauna &amp; Ice Bath</li>
+                        </ul>
+                        <button class="relative overflow-hidden w-full bg-lora-accent text-black font-bold py-5 rounded uppercase tracking-widest text-sm hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(204,255,0,0.3)] group/btn z-10">
+                            <span class="absolute inset-0 w-full h-full bg-white transform -translate-x-full skew-x-12 transition-transform duration-500 group-hover/btn:translate-x-0 group-hover/btn:skew-x-0"></span>
+                            <span class="relative group-hover/btn:text-black">Join The Tribe</span>
+                        </button>
+                    </div>
+
+                    <!-- Elite Plan -->
+                    <div class="group relative bg-lora-dark/80 backdrop-blur-xl border border-white/5 p-8 flex flex-col h-full rounded-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] fade-in-section" style="transition-delay: 200ms">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-t-2xl"></div>
+                        <h3 class="text-3xl font-display font-bold text-white mb-2">ELITE</h3>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest mb-8 font-bold">For the professional</p>
+                        <div class="text-5xl font-display font-bold text-white mb-2">LKR 15k<span class="text-lg text-gray-500 font-sans font-normal">/mo</span></div>
+                        <p class="text-gray-400 text-sm mb-8">Premium access with dedicated coaching and nutrition support.</p>
+                        
+                        <ul class="space-y-4 mb-10 flex-1">
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-yellow-500/10 flex items-center justify-center mr-3"><i class="fas fa-check text-yellow-500 text-[10px]"></i></div> 24/7 Unlimited Access</li>
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-yellow-500/10 flex items-center justify-center mr-3"><i class="fas fa-check text-yellow-500 text-[10px]"></i></div> Personal Trainer (2x/mo)</li>
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-yellow-500/10 flex items-center justify-center mr-3"><i class="fas fa-check text-yellow-500 text-[10px]"></i></div> Custom Nutrition Plan</li>
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-yellow-500/10 flex items-center justify-center mr-3"><i class="fas fa-check text-yellow-500 text-[10px]"></i></div> Private Premium Locker</li>
+                            <li class="flex items-center text-gray-300 text-sm"><div class="w-5 h-5 rounded-full bg-yellow-500/10 flex items-center justify-center mr-3"><i class="fas fa-check text-yellow-500 text-[10px]"></i></div> Priority Booking</li>
+                        </ul>
+                        <button class="w-full border border-white/20 text-white font-bold py-4 rounded uppercase tracking-widest text-sm hover:bg-white hover:text-black hover:border-white transition-all duration-300 flex items-center justify-center gap-2">
+                             Select Plan
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Comparison Feature -->
+                <div class="mt-32 max-w-5xl mx-auto bg-lora-dark/50 backdrop-blur-xl border border-white/5 rounded-2xl p-8 shadow-2xl fade-in-section">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        <div class="flex flex-col items-center text-center group cursor-pointer">
+                            <div class="w-16 h-16 rounded-full bg-lora-black border border-white/10 flex items-center justify-center mb-4 group-hover:border-lora-accent group-hover:bg-lora-accent/10 transition-all duration-300 relative overflow-hidden">
+                                <div class="absolute inset-0 blur-md bg-lora-accent/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <i class="fas fa-fingerprint text-white text-2xl group-hover:text-lora-accent transition-colors relative z-10"></i>
+                            </div>
+                            <h4 class="text-white font-display font-bold text-sm tracking-wider uppercase mb-1">Face ID Access</h4>
+                            <p class="text-gray-500 text-xs font-light">Seamless 24/7 entry</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center group cursor-pointer">
+                            <div class="w-16 h-16 rounded-full bg-lora-black border border-white/10 flex items-center justify-center mb-4 group-hover:border-lora-accent group-hover:bg-lora-accent/10 transition-all duration-300 relative overflow-hidden">
+                                <div class="absolute inset-0 blur-md bg-lora-accent/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <i class="fas fa-wifi text-white text-2xl group-hover:text-lora-accent transition-colors relative z-10"></i>
+                            </div>
+                            <h4 class="text-white font-display font-bold text-sm tracking-wider uppercase mb-1">Gigabit WiFi</h4>
+                            <p class="text-gray-500 text-xs font-light">Fast everywhere</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center group cursor-pointer">
+                            <div class="w-16 h-16 rounded-full bg-lora-black border border-white/10 flex items-center justify-center mb-4 group-hover:border-lora-accent group-hover:bg-lora-accent/10 transition-all duration-300 relative overflow-hidden">
+                                <div class="absolute inset-0 blur-md bg-lora-accent/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <i class="fas fa-coffee text-white text-xl group-hover:text-lora-accent transition-colors relative z-10"></i>
+                            </div>
+                            <h4 class="text-white font-display font-bold text-sm tracking-wider uppercase mb-1">Fuel Bar &amp; Shake</h4>
+                            <p class="text-gray-500 text-xs font-light">Pre &amp; post workout</p>
+                        </div>
+                        <div class="flex flex-col items-center text-center group cursor-pointer">
+                            <div class="w-16 h-16 rounded-full bg-lora-black border border-white/10 flex items-center justify-center mb-4 group-hover:border-lora-accent group-hover:bg-lora-accent/10 transition-all duration-300 relative overflow-hidden">
+                                <div class="absolute inset-0 blur-md bg-lora-accent/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <i class="fas fa-parking text-white text-2xl group-hover:text-lora-accent transition-colors relative z-10"></i>
+                            </div>
+                            <h4 class="text-white font-display font-bold text-sm tracking-wider uppercase mb-1">Free Parking</h4>
+                            <p class="text-gray-500 text-xs font-light">Validated 3 hours</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 5: FAQ -->
+        <div id="faq-page" class="page-content hidden min-h-screen bg-lora-black relative overflow-hidden">
+            <!-- Background Elements -->
+            <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-lora-accent/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] pointer-events-none translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div class="pt-32 pb-24 relative z-10 block">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Split Layout -->
+                    <div class="flex flex-col lg:flex-row gap-16 lg:gap-24">
+                        
+                        <!-- Left Column: Header & Contact -->
+                        <div class="lg:w-1/3 flex flex-col justify-between fade-in-section">
+                            <div class="sticky top-32">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <span class="w-12 h-[2px] bg-lora-accent"></span>
+                                    <span class="text-lora-accent text-xs font-bold tracking-[0.3em] uppercase">Knowledge Base</span>
+                                </div>
+                                <h1 class="text-5xl md:text-7xl font-display font-bold text-white mb-6 uppercase tracking-tight leading-[0.9]">
+                                    COMMON<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-lora-accent to-gray-500">QUESTIONS</span>
+                                </h1>
+                                <p class="text-gray-400 text-lg font-light leading-relaxed mb-12 border-l-2 border-white/10 pl-6">
+                                    Everything you need to know before stepping onto the floor. No excuses.
+                                </p>
+                                
+                                <!-- Contact Support Box -->
+                                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-8 relative overflow-hidden group">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-lora-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                    <div class="absolute top-0 left-0 w-1 h-0 bg-lora-accent group-hover:h-full transition-all duration-500"></div>
+                                    
+                                    <h3 class="text-xl font-display font-bold text-white mb-2 relative z-10">Still have questions?</h3>
+                                    <p class="text-gray-400 text-sm mb-6 relative z-10">Our team is ready to assist you with membership details, personal training, and more.</p>
+                                    
+                                    <a href="#" class="inline-flex items-center gap-3 text-lora-accent font-bold uppercase tracking-widest text-sm relative z-10 group/link">
+                                        Contact Support 
+                                        <div class="w-8 h-8 rounded-full border border-lora-accent/30 flex items-center justify-center group-hover/link:bg-lora-accent group-hover/link:text-black transition-all">
+                                            <i class="fas fa-arrow-right text-xs group-hover/link:translate-x-1 transition-transform"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column: FAQ Accordions -->
+                        <div class="lg:w-2/3 space-y-4 fade-in-section">
+                            <!-- FAQ Item 1 -->
+                            <details class="group bg-lora-dark border border-white/5 rounded-xl transition-all duration-300 open:bg-lora-black open:shadow-[0_0_30px_rgba(204,255,0,0.05)] hover:border-white/20 open:border-lora-accent/30" open="">
+                                <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 md:p-8 text-white text-lg transition-colors relative overflow-hidden">
+                                    <span class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                    <span class="relative z-10 font-display tracking-wide group-open:text-lora-accent transition-colors">What are your opening hours?</span>
+                                    <span class="relative z-10 transform transition-transform duration-300 group-open:rotate-180 text-lora-accent flex items-center justify-center w-8 h-8 rounded-full bg-white/5 group-hover:bg-white/10">
+                                        <i class="fas fa-chevron-down text-sm"></i>
+                                    </span>
+                                </summary>
+                                <div class="text-gray-400 mt-0 px-6 md:px-8 pb-8 leading-relaxed font-light text-[0.95rem]">
+                                    We are open 24/7 for Pro and Elite members via biometric access. Staffed hours are from 6 AM to 10 PM daily. Standard members can access the gym between 08:00 AM and 04:00 PM.
+                                </div>
+                            </details>
+
+                            <!-- FAQ Item 2 -->
+                            <details class="group bg-lora-dark border border-white/5 rounded-xl transition-all duration-300 open:bg-lora-black open:shadow-[0_0_30px_rgba(204,255,0,0.05)] hover:border-white/20 open:border-lora-accent/30">
+                                <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 md:p-8 text-white text-lg transition-colors relative overflow-hidden">
+                                    <span class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                    <span class="relative z-10 font-display tracking-wide group-open:text-lora-accent transition-colors">Is there parking available?</span>
+                                    <span class="relative z-10 transform transition-transform duration-300 group-open:rotate-180 text-lora-accent flex items-center justify-center w-8 h-8 rounded-full bg-white/5 group-hover:bg-white/10">
+                                        <i class="fas fa-chevron-down text-sm"></i>
+                                    </span>
+                                </summary>
+                                <div class="text-gray-400 mt-0 px-6 md:px-8 pb-8 leading-relaxed font-light text-[0.95rem]">
+                                    Yes, we have a dedicated underground parking lot for members located right off Galle Road. Validated parking is available for up to 3 hours per visit.
+                                </div>
+                            </details>
+
+                            <!-- FAQ Item 3 -->
+                            <details class="group bg-lora-dark border border-white/5 rounded-xl transition-all duration-300 open:bg-lora-black open:shadow-[0_0_30px_rgba(204,255,0,0.05)] hover:border-white/20 open:border-lora-accent/30">
+                                <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 md:p-8 text-white text-lg transition-colors relative overflow-hidden">
+                                    <span class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                    <span class="relative z-10 font-display tracking-wide group-open:text-lora-accent transition-colors">Do you offer personal training?</span>
+                                    <span class="relative z-10 transform transition-transform duration-300 group-open:rotate-180 text-lora-accent flex items-center justify-center w-8 h-8 rounded-full bg-white/5 group-hover:bg-white/10">
+                                        <i class="fas fa-chevron-down text-sm"></i>
+                                    </span>
+                                </summary>
+                                <div class="text-gray-400 mt-0 px-6 md:px-8 pb-8 leading-relaxed font-light text-[0.95rem]">
+                                    Absolutely. We have over 15 certified trainers specializing in bodybuilding, weight loss, functional training, and rehabilitation. You can book a consultation at the front desk or via our app.
+                                </div>
+                            </details>
+
+                            <!-- FAQ Item 4 -->
+                            <details class="group bg-lora-dark border border-white/5 rounded-xl transition-all duration-300 open:bg-lora-black open:shadow-[0_0_30px_rgba(204,255,0,0.05)] hover:border-white/20 open:border-lora-accent/30">
+                                <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 md:p-8 text-white text-lg transition-colors relative overflow-hidden">
+                                    <span class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                    <span class="relative z-10 font-display tracking-wide group-open:text-lora-accent transition-colors">Can I freeze my membership?</span>
+                                    <span class="relative z-10 transform transition-transform duration-300 group-open:rotate-180 text-lora-accent flex items-center justify-center w-8 h-8 rounded-full bg-white/5 group-hover:bg-white/10">
+                                        <i class="fas fa-chevron-down text-sm"></i>
+                                    </span>
+                                </summary>
+                                <div class="text-gray-400 mt-0 px-6 md:px-8 pb-8 leading-relaxed font-light text-[0.95rem]">
+                                    Yes, memberships can be frozen for up to 3 months for medical reasons or travel, provided you give us 2 weeks notice.
+                                </div>
+                            </details>
+
+                             <!-- FAQ Item 5 -->
+                             <details class="group bg-lora-dark border border-white/5 rounded-xl transition-all duration-300 open:bg-lora-black open:shadow-[0_0_30px_rgba(204,255,0,0.05)] hover:border-white/20 open:border-lora-accent/30">
+                                <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 md:p-8 text-white text-lg transition-colors relative overflow-hidden">
+                                    <span class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                    <span class="relative z-10 font-display tracking-wide group-open:text-lora-accent transition-colors">Do you have showers and lockers?</span>
+                                    <span class="relative z-10 transform transition-transform duration-300 group-open:rotate-180 text-lora-accent flex items-center justify-center w-8 h-8 rounded-full bg-white/5 group-hover:bg-white/10">
+                                        <i class="fas fa-chevron-down text-sm"></i>
+                                    </span>
+                                </summary>
+                                <div class="text-gray-400 mt-0 px-6 md:px-8 pb-8 leading-relaxed font-light text-[0.95rem]">
+                                    Our changing rooms are equipped with luxury rainfall showers, secure lockers (bring your own lock or rent one), and hair dryers. Elite members get a permanent private locker.
+                                </div>
+                            </details>
+
+                            <!-- FAQ Item 6 -->
+                            <details class="group bg-lora-dark border border-white/5 rounded-xl transition-all duration-300 open:bg-lora-black open:shadow-[0_0_30px_rgba(204,255,0,0.05)] hover:border-white/20 open:border-lora-accent/30">
+                                <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6 md:p-8 text-white text-lg transition-colors relative overflow-hidden">
+                                    <span class="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                    <span class="relative z-10 font-display tracking-wide group-open:text-lora-accent transition-colors">What is the cancellation policy?</span>
+                                    <span class="relative z-10 transform transition-transform duration-300 group-open:rotate-180 text-lora-accent flex items-center justify-center w-8 h-8 rounded-full bg-white/5 group-hover:bg-white/10">
+                                        <i class="fas fa-chevron-down text-sm"></i>
+                                    </span>
+                                </summary>
+                                <div class="text-gray-400 mt-0 px-6 md:px-8 pb-8 leading-relaxed font-light text-[0.95rem]">
+                                    We operate on a month-to-month basis for maximum flexibility. Just let us know 30 days in advance if you wish to cancel. No hidden exit fees.
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GLOBAL CINEMATIC FOOTER -->
+        <footer class="relative bg-lora-black border-t border-white/10 pt-24 pb-12 overflow-hidden z-20">
+            <!-- Dynamic Background Glows -->
+            <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-lora-accent/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2"></div>
+            <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-lora-accent/5 rounded-full blur-[120px] pointer-events-none translate-x-1/3 translate-y-1/3"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid md:grid-cols-12 gap-16 lg:gap-8 mb-20">
+                    <!-- Brand Column -->
+                    <div class="md:col-span-5 pr-4 lg:pr-12 fade-in-section">
+                        <h2 class="font-display text-6xl md:text-7xl font-bold text-white mb-6 tracking-tighter leading-none">
+                            LORA<span class="text-transparent bg-clip-text bg-gradient-to-tr from-lora-accent to-yellow-200">.</span>
+                        </h2>
+                        <p class="text-gray-400 font-light mb-10 leading-relaxed text-lg">
+                            Forging elite fitness in the heart of Colombo. We provide the atmosphere, the equipment, and the expertise. You provide the effort.
+                        </p>
+                        
+                        <!-- Premium Newsletter -->
+                        <div class="mb-10 group relative">
+                            <div class="absolute -inset-0.5 bg-gradient-to-r from-lora-accent/50 to-white/10 rounded-lg blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
+                            <div class="relative flex items-center bg-lora-dark/80 backdrop-blur-md border border-white/10 p-1.5 rounded-lg group-hover:border-white/20 transition-all">
+                                <i class="fas fa-envelope text-gray-500 pl-4 pr-2"></i>
+                                <input type="email" placeholder="Join the Legion" class="bg-transparent text-white px-2 py-3 w-full outline-none text-sm placeholder-gray-600 font-light">
+                                <button class="bg-white text-black px-6 py-3 font-bold uppercase tracking-widest text-xs hover:bg-lora-accent transition-colors rounded-md shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(204,255,0,0.4)]">Subscribe</button>
+                            </div>
+                        </div>
+
+                        <!-- Social Icons -->
+                        <div class="flex gap-4">
+                            <a href="#" class="group relative w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-lora-accent/50 hover:shadow-[0_10px_20px_rgba(204,255,0,0.2)]">
+                                <div class="absolute inset-0 bg-lora-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <i class="fab fa-instagram text-white group-hover:text-black relative z-10 text-lg transition-colors"></i>
+                            </a>
+                            <a href="#" class="group relative w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-lora-accent/50 hover:shadow-[0_10px_20px_rgba(204,255,0,0.2)]">
+                                <div class="absolute inset-0 bg-lora-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <i class="fab fa-facebook-f text-white group-hover:text-black relative z-10 text-lg transition-colors"></i>
+                            </a>
+                            <a href="#" class="group relative w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-lora-accent/50 hover:shadow-[0_10px_20px_rgba(204,255,0,0.2)]">
+                                <div class="absolute inset-0 bg-lora-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <i class="fab fa-tiktok text-white group-hover:text-black relative z-10 text-lg transition-colors"></i>
+                            </a>
+                            <a href="#" class="group relative w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:border-lora-accent/50 hover:shadow-[0_10px_20px_rgba(204,255,0,0.2)]">
+                                <div class="absolute inset-0 bg-lora-accent translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <i class="fab fa-youtube text-white group-hover:text-black relative z-10 text-lg transition-colors"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Links Column -->
+                    <div class="md:col-span-3 lg:col-span-3 fade-in-section" style="transition-delay: 100ms">
+                        <h4 class="text-white font-display font-bold uppercase mb-8 tracking-[0.2em] text-sm flex items-center gap-3">
+                            <span class="w-6 h-[2px] bg-gradient-to-r from-lora-accent to-transparent"></span> Explore
+                        </h4>
+                        <ul class="space-y-4 text-gray-400 text-sm font-light">
+                            <!-- Using buttons with similar style for router to avoid anchor jump -->
+                            <li><button onclick="router('home')" class="hover:text-lora-accent transition-all flex items-center gap-3 group"><span class="w-0 h-[1px] bg-lora-accent group-hover:w-4 transition-all duration-300"></span> Home</button></li>
+                            <li><button onclick="router('about')" class="hover:text-lora-accent transition-all flex items-center gap-3 group"><span class="w-0 h-[1px] bg-lora-accent group-hover:w-4 transition-all duration-300"></span> Our Story</button></li>
+                            <li><button onclick="router('classes')" class="hover:text-lora-accent transition-all flex items-center gap-3 group"><span class="w-0 h-[1px] bg-lora-accent group-hover:w-4 transition-all duration-300"></span> Class Schedule</button></li>
+                            <li><button onclick="router('membership')" class="hover:text-lora-accent transition-all flex items-center gap-3 group"><span class="w-0 h-[1px] bg-lora-accent group-hover:w-4 transition-all duration-300"></span> Memberships</button></li>
+                            <li><button onclick="router('faq')" class="hover:text-lora-accent transition-all flex items-center gap-3 group"><span class="w-0 h-[1px] bg-lora-accent group-hover:w-4 transition-all duration-300"></span> Knowledge Base</button></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Hours Column -->
+                    <div class="md:col-span-4 lg:col-span-4 fade-in-section" style="transition-delay: 200ms">
+                        <h4 class="text-white font-display font-bold uppercase mb-8 tracking-[0.2em] text-sm flex items-center gap-3">
+                            <span class="w-6 h-[2px] bg-gradient-to-r from-lora-accent to-transparent"></span> Operations
+                        </h4>
+                        <div class="bg-gradient-to-b from-white/5 to-transparent border border-white/5 rounded-2xl p-6 backdrop-blur-sm relative group overflow-hidden">
+                            <div class="absolute inset-0 bg-lora-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <ul class="space-y-4 text-gray-300 text-sm font-light relative z-10">
+                                <li class="flex justify-between items-center border-b border-white/5 pb-4">
+                                    <span class="text-gray-400">Monday - Friday</span> 
+                                    <span class="bg-lora-accent text-black px-3 py-1 rounded text-[10px] font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(204,255,0,0.3)]">24 Hours</span>
+                                </li>
+                                <li class="flex justify-between items-center border-b border-white/5 pb-4 pt-2">
+                                    <span class="text-gray-400">Saturday</span> 
+                                    <span class="text-white font-medium tracking-wide">06:00 - 00:00</span>
+                                </li>
+                                <li class="flex justify-between items-center pt-2">
+                                    <span class="text-gray-400">Sunday</span> 
+                                    <span class="text-white font-medium tracking-wide">08:00 - 22:00</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom Bar -->
+                <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 mt-16 fade-in-section" style="transition-delay: 300ms">
+                    <p class="text-gray-500 text-xs uppercase tracking-widest font-light">© 2024 Lora Fitness Sri Lanka. All rights reserved.</p>
+                    <div class="flex gap-8 text-xs uppercase tracking-widest font-light text-gray-500">
+                        <a href="#" class="hover:text-lora-accent transition-colors relative group">
+                            Privacy Policy
+                            <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-lora-accent group-hover:w-full transition-all duration-300"></span>
+                        </a>
+                        <a href="#" class="hover:text-lora-accent transition-colors relative group">
+                            Terms of Service
+                            <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-lora-accent group-hover:w-full transition-all duration-300"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. Advanced Loading Screen Logic
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            const counter = document.getElementById('loader-counter');
+            let count = 0;
+            
+            // Counter Animation
+            const interval = setInterval(() => {
+                count += Math.floor(Math.random() * 5) + 1; // Random jump
+                if (count > 100) count = 100;
+                counter.innerText = count + '%';
+                
+                if (count === 100) {
+                    clearInterval(interval);
+                    // Trigger Shutter Animation
+                    setTimeout(() => {
+                        loader.classList.add('loader-open');
+                        
+                        // Clean up DOM after animation
+                        setTimeout(() => {
+                            loader.classList.add('loader-done');
+                            // Enable scrolling
+                            document.body.style.overflowY = 'auto';
+                            // Trigger home animations
+                            triggerScrollAnimations();
+                        }, 800);
+                        
+                    }, 500); // Slight pause at 100%
+                }
+            }, 60); // Speed of counter
+            
+            // Prevent scrolling initially
+            document.body.style.overflowY = 'hidden';
+        });
+
+        // 2. SPA Router Logic
+        function router(pageName) {
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('block');
+            });
+
+            const selectedPage = document.getElementById(`${pageName}-page`);
+            if (selectedPage) {
+                selectedPage.classList.remove('hidden');
+                selectedPage.classList.add('block');
+                window.scrollTo(0, 0);
+                
+                // Trigger animations for the new page
+                setTimeout(() => {
+                    triggerScrollAnimations();
+                }, 100);
+            }
+            
+            // Close mobile menu
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        // 3. Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-scrolled');
+                navbar.classList.remove('nav-transparent');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+                navbar.classList.add('nav-transparent');
+            }
+        });
+
+        // 4. Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // 5. Scroll Animation (Intersection Observer)
+        function triggerScrollAnimations() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const sections = document.querySelectorAll('.fade-in-section');
+            sections.forEach(section => {
+                section.classList.remove('is-visible'); // Reset
+                observer.observe(section);
+            });
+        }
+
+    </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+
+</body></html>
